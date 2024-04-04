@@ -51,6 +51,11 @@ std::string CapStringToWidth(const char* str, float size, float width) {
 	return ret;
 }
 
+bool IsWriteableInputCharacter(std::string& str) {
+	if (str.find(VK_BACK) != std::string::npos) return false;
+	if (str.find(VK_ESCAPE) != std::string::npos) return false;
+	return true;
+}
 
 void WriteStringToFile(std::ofstream& file, const char* string) {
 	int len  = lstrlen(string) + 1;

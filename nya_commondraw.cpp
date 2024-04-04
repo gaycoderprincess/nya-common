@@ -13,6 +13,33 @@ namespace NyaDrawing {
 
 	const int nMaxDrawablesPerType = 1024;
 
+	static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) {
+		return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
+	}
+
+	static inline ImVec2 ImRotate(const ImVec2& v, float cos_a, float sin_a) {
+		return ImVec2(v.x * cos_a - v.y * sin_a, v.x * sin_a + v.y * cos_a);
+	}
+
+	void ImageRotated(ImDrawList* draw_list, ImTextureID tex_id, ImVec2 center, ImVec2 size, float angle, ImU32 col) {
+		float cos_a = cosf(angle);
+		float sin_a = sinf(angle);
+		ImVec2 pos[4] = {
+			center + ImRotate(ImVec2(-size.x * 0.5f, -size.y * 0.5f), cos_a, sin_a),
+			center + ImRotate(ImVec2(+size.x * 0.5f, -size.y * 0.5f), cos_a, sin_a),
+			center + ImRotate(ImVec2(+size.x * 0.5f, +size.y * 0.5f), cos_a, sin_a),
+			center + ImRotate(ImVec2(-size.x * 0.5f, +size.y * 0.5f), cos_a, sin_a)
+		};
+		ImVec2 uvs[4] = {
+			ImVec2(0.0f, 0.0f),
+			ImVec2(1.0f, 0.0f),
+			ImVec2(1.0f, 1.0f),
+			ImVec2(0.0f, 1.0f)
+		};
+
+		draw_list->AddImageQuad(tex_id, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], col);
+	}
+
 	void CNyaRectangle::Draw() const {
 		if (!a) return;
 
@@ -28,8 +55,12 @@ namespace NyaDrawing {
 		v2.x = x2 * nResX;
 		v2.y = y2 * nResY;
 
-		if (texture) ImGui::GetForegroundDrawList()->AddImageRounded(texture, v1, v2, ImVec2(0, 0), ImVec2(1, 1), rgb, rounding * nResY, 0);
-		else ImGui::GetForegroundDrawList()->AddRectFilled(v1, v2, rgb, rounding * nResY, 0);
+		auto drawList = ImGui::GetForegroundDrawList();
+		if (texture) {
+			if (rotation != 0.0) ImageRotated(drawList, texture, ImVec2((v1.x + v2.x) * 0.5, (v1.y + v2.y) * 0.5), ImVec2(v2.x - v1.x, v2.y - v1.y), rotation, rgb);
+			else drawList->AddImageRounded(texture, v1, v2, ImVec2(0, 0), ImVec2(1, 1), rgb, rounding * nResY, 0);
+		}
+		else drawList->AddRectFilled(v1, v2, rgb, rounding * nResY, 0);
 	}
 
 	void CNyaTriangle::Draw() const {
@@ -109,7 +140,12 @@ namespace NyaDrawing {
 	int nNextText = 0;
 
 	void DrawAll() {
+#ifdef NYA_BACKEND_DX8
+		ImGui_ImplDX8_NewFrame();
+#endif
+#ifdef NYA_BACKEND_DX11
 		ImGui_ImplDX11_NewFrame();
+#endif
 		ImGui::NewFrame();
 
 		for (auto& drawable : aDrawList) {
@@ -127,7 +163,12 @@ namespace NyaDrawing {
 
 		ImDrawData* drawData = ImGui::GetDrawData();
 		if (drawData->TotalVtxCount > 0) {
+#ifdef NYA_BACKEND_DX8
+			ImGui_ImplDX8_RenderDrawData(drawData);
+#endif
+#ifdef NYA_BACKEND_DX11
 			ImGui_ImplDX11_RenderDrawData(drawData);
+#endif
 		}
 
 		NyaDrawing::aDrawList.clear();
@@ -151,7 +192,7 @@ float GetStringHeight(float size, const char* string) {
 	return ImGui::GetFont()->CalcTextSizeA(scale, FLT_MAX, 0, string).y / (double)nResY;
 }
 
-bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding, TEXTURE_TYPE* texture) {
+bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding, TEXTURE_TYPE* texture, float rotation) {
 	if (NyaDrawing::nNextRectangle >= NyaDrawing::nMaxDrawablesPerType) return false;
 
 	auto& tmp = NyaDrawing::aRectangles[NyaDrawing::nNextRectangle++];
@@ -165,6 +206,7 @@ bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing:
 	tmp.a = rgb.a;
 	tmp.rounding = rounding;
 	tmp.texture = texture;
+	tmp.rotation = rotation;
 	NyaDrawing::aDrawList.push_back(&tmp);
 
 	if (!IsWindowInFocus()) return false;

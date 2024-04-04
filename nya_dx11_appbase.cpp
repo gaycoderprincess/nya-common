@@ -89,12 +89,6 @@ void AppBaseLoop() {
 	g_pSwapChain->Present(bVSync, 0);
 }
 
-bool IsWriteableInputCharacter(std::string& str) {
-	if (str.find(VK_BACK) != std::string::npos) return false;
-	if (str.find(VK_ESCAPE) != std::string::npos) return false;
-	return true;
-}
-
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch (msg) {
 		case WM_MOUSEWHEEL:
@@ -155,7 +149,9 @@ bool InitAppBase() {
 	ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
 	auto& io = ImGui::GetIO();
+#ifndef NYA_NO_FONT
 	io.Fonts->AddFontFromFileTTF(NYA_FONTNAME, NYA_FONTSIZE);
+#endif
 	io.IniFilename = nullptr;
 	io.LogFilename = nullptr;
 	io.DisplaySize.x = nResX;

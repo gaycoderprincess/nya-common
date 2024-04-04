@@ -11,6 +11,13 @@ namespace NyaHookLib {
 		VirtualProtect((void*)address, sizeof(value), backup, &backup2);
 	}
 
+	void Fill(uintptr_t address, uint8_t value, unsigned int count) {
+		DWORD backup, backup2;
+		VirtualProtect((void*)address, sizeof(value), PAGE_EXECUTE_READWRITE, &backup);
+		memset((void*)address, value, count);
+		VirtualProtect((void*)address, sizeof(value), backup, &backup2);
+	}
+
 	inline intptr_t MakeRelative(uintptr_t src, uintptr_t dest) {
 		return dest - (src + 4);
 	}

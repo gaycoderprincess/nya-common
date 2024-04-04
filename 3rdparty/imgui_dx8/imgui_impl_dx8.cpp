@@ -202,7 +202,6 @@ void ImGui_ImplDX8_RenderDrawData(ImDrawData* draw_data)
     // (Because we merged all buffers into a single one, we maintain our own offset into them)
     int global_vtx_offset = 0;
     int global_idx_offset = 0;
-    ImVec2 clip_off = draw_data->DisplayPos;
     for (int n = 0; n < draw_data->CmdListsCount; n++)
     {
         const ImDrawList* cmd_list = draw_data->CmdLists[n];
@@ -307,8 +306,6 @@ static bool ImGui_ImplDX8_CreateFontsTexture()
             *dst = IMGUI_COL_TO_DX8_ARGB(*src);
         pixels = (unsigned char*)dst_start;
     }
-#else
-    const bool rgba_support = false;
 #endif
 
     // Upload texture to graphics system

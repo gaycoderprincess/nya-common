@@ -59,6 +59,7 @@ namespace NyaDrawing {
 		float x2 = 0;
 		float y2 = 0;
 		float rounding = 0;
+		float rotation = 0;
 		uint8_t r = 0;
 		uint8_t g = 0;
 		uint8_t b = 0;
@@ -95,7 +96,7 @@ namespace NyaDrawing {
 	void DrawAll();
 }
 
-bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding = 0, TEXTURE_TYPE* texture = nullptr);
+bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding = 0, TEXTURE_TYPE* texture = nullptr, float rotation = 0);
 void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb);
 void DrawString(tNyaStringData data, const char* string);
 float GetStringWidth(float size, const char* string);
