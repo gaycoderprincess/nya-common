@@ -31,6 +31,7 @@ struct tNyaStringData {
 	float clipMaxY = 1;
 
 	void SetColor(const NyaDrawing::CNyaRGBA32*);
+	void SetColor(int r, int g, int b, int a);
 };
 
 namespace NyaDrawing {

@@ -6,6 +6,7 @@
 
 bool bKeyPressed[255];
 bool bKeyPressedLast[255];
+bool bDontRefreshInputsThisLoop = false;
 bool IsKeyPressed(int key) {
 	if (key <= 0) return false;
 	if (key >= 255) return false;
@@ -79,14 +80,16 @@ std::string ReadStringFromFile(std::ifstream& file) {
 void CommonMain() {
 	NyaDrawing::DrawAll();
 
-	memcpy(bKeyPressedLast, bKeyPressed, sizeof(bKeyPressed));
+	if (!bDontRefreshInputsThisLoop) {
+		memcpy(bKeyPressedLast, bKeyPressed, sizeof(bKeyPressed));
 
-	if (IsWindowInFocus()) {
-		for (int i = 0; i < 255; i++) {
-			bKeyPressed[i] = (GetAsyncKeyState(i) & 0x8000) != 0;
+		if (IsWindowInFocus()) {
+			for (int i = 0; i < 255; i++) {
+				bKeyPressed[i] = (GetAsyncKeyState(i) & 0x8000) != 0;
+			}
+		} else {
+			memset(bKeyPressed, 0, sizeof(bKeyPressed));
 		}
 	}
-	else {
-		memset(bKeyPressed, 0, sizeof(bKeyPressed));
-	}
+	bDontRefreshInputsThisLoop = false;
 }

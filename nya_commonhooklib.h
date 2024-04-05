@@ -22,15 +22,21 @@ namespace NyaHookLib {
 		return dest - (src + 4);
 	}
 
+	inline intptr_t ReadRelative(uintptr_t src) {
+		return src + *(int32_t*)src + 4;
+	}
+
 	enum eOffsetInstruction {
 		CALL,
 		JMP,
 	};
 
 	template<typename T>
-	void PatchRelative(eOffsetInstruction type, uintptr_t src, T dest) {
+	uintptr_t PatchRelative(eOffsetInstruction type, uintptr_t src, T dest) {
 		Patch<uint8_t>(src, type == CALL ? 0xE8 : 0xE9);
+		auto old = ReadRelative(src + 1);
 		Patch<intptr_t>(src + 1, MakeRelative(src + 1, (uintptr_t)dest));
+		return old;
 	}
 }
 

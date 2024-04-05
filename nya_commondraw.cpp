@@ -8,6 +8,13 @@ void tNyaStringData::SetColor(const NyaDrawing::CNyaRGBA32* color) {
 	this->a = color->a;
 }
 
+void tNyaStringData::SetColor(int r, int g, int b, int a) {
+	this->r = r;
+	this->g = g;
+	this->b = b;
+	this->a = a;
+}
+
 namespace NyaDrawing {
 	std::vector<CNyaDrawable*> aDrawList;
 

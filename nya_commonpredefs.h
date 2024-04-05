@@ -27,6 +27,7 @@ extern IDirect3DDevice8* g_pd3dDevice;
 extern HWND ghWnd;
 extern int nResX;
 extern int nResY;
+extern bool bDontRefreshInputsThisLoop;
 int GetMouseWheelState();
 double GetMousePosX();
 double GetMousePosY();
