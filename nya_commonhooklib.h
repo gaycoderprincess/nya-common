@@ -18,7 +18,7 @@ namespace NyaHookLib {
 		VirtualProtect((void*)address, count, backup, &backup2);
 	}
 
-	inline intptr_t MakeRelative(uintptr_t src, uintptr_t dest) {
+	inline int32_t MakeRelative(uintptr_t src, uintptr_t dest) {
 		return dest - (src + 4);
 	}
 
@@ -31,11 +31,63 @@ namespace NyaHookLib {
 		JMP,
 	};
 
+#ifdef __x86_64
+	uintptr_t MakeTrampoline(uintptr_t src, uintptr_t dest) {
+		// don't create a trampoline if already within int32 range
+		int64_t initialDiff = src - dest;
+		if (abs(initialDiff) < INT32_MAX) return dest;
+
+		struct Trampoline {
+			uint8_t instructions[6];
+			uintptr_t destination;
+		} __attribute__((packed));
+		static_assert(sizeof(Trampoline) == 14);
+
+		SYSTEM_INFO sys;
+		GetSystemInfo( &sys );
+
+		size_t size = sizeof(Trampoline);
+
+		uintptr_t lowestAddr = src - INT32_MAX;
+		if (lowestAddr > src) lowestAddr = sys.dwAllocationGranularity; // not sure if trying the zero page is a good idea >w<
+		uintptr_t highestAddr = src + INT32_MAX;
+		if (highestAddr < src) highestAddr = INT64_MAX;
+
+		uintptr_t addr = lowestAddr;
+		while (addr < highestAddr) {
+			MEMORY_BASIC_INFORMATION info;
+			VirtualQuery( (void*)addr, &info, sizeof(info));
+			if (info.State == MEM_FREE && info.RegionSize >= size && ((uintptr_t)info.BaseAddress >= lowestAddr) && ((uintptr_t)info.BaseAddress <= highestAddr)) {
+				uintptr_t target = (uintptr_t)info.BaseAddress;
+				if (target % sys.dwAllocationGranularity != 0) target += sys.dwAllocationGranularity - (target % sys.dwAllocationGranularity);
+				if (auto trampoline = (Trampoline*)VirtualAlloc( (void*)target, size, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE )) {
+					memset(trampoline, 0, size);
+					trampoline->instructions[0] = 0xFF;
+					trampoline->instructions[1] = 0x25;
+					trampoline->destination = dest;
+					return (uintptr_t)trampoline;
+				}
+			}
+
+			addr += info.RegionSize;
+		}
+		return 0;
+	}
+#endif
+
 	template<typename T>
 	uintptr_t PatchRelative(eOffsetInstruction type, uintptr_t src, T dest) {
 		Patch<uint8_t>(src, type == CALL ? 0xE8 : 0xE9);
 		auto old = ReadRelative(src + 1);
-		Patch<intptr_t>(src + 1, MakeRelative(src + 1, (uintptr_t)dest));
+
+#ifdef __x86_64
+		auto realDest = MakeTrampoline(src + 1, (uintptr_t)dest);
+		if (!realDest) return old;
+#else
+		auto realDest = (uintptr_t)dest;
+#endif
+
+		Patch<int32_t>(src + 1, MakeRelative(src + 1, realDest));
 		return old;
 	}
 }
