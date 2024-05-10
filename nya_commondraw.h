@@ -29,9 +29,12 @@ struct tNyaStringData {
 	float clipMinY = 0;
 	float clipMaxX = 1;
 	float clipMaxY = 1;
+	bool topLevel = false;
 
 	void SetColor(const NyaDrawing::CNyaRGBA32*);
 	void SetColor(int r, int g, int b, int a);
+	void SetOutlineColor(const NyaDrawing::CNyaRGBA32*);
+	void SetOutlineColor(int r, int g, int b, int a);
 };
 
 namespace NyaDrawing {

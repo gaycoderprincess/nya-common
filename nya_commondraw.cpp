@@ -15,6 +15,20 @@ void tNyaStringData::SetColor(int r, int g, int b, int a) {
 	this->a = a;
 }
 
+void tNyaStringData::SetOutlineColor(const NyaDrawing::CNyaRGBA32* color) {
+	this->outliner = color->r;
+	this->outlineg = color->g;
+	this->outlineb = color->b;
+	this->outlinea = color->a;
+}
+
+void tNyaStringData::SetOutlineColor(int r, int g, int b, int a) {
+	this->outliner = r;
+	this->outlineg = g;
+	this->outlineb = b;
+	this->outlinea = a;
+}
+
 namespace NyaDrawing {
 	std::vector<CNyaDrawable*> aDrawList;
 
@@ -247,6 +261,7 @@ void DrawString(tNyaStringData data, const char* string) {
 
 	auto& tmp = NyaDrawing::aText[NyaDrawing::nNextText++];
 	tmp.data = data;
+	tmp.topLevel = data.topLevel;
 	strcpy_s(tmp.string, string);
 	NyaDrawing::aDrawList.push_back(&tmp);
 }

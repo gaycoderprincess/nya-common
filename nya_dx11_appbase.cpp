@@ -13,7 +13,7 @@ IDXGISwapChain* g_pSwapChain = nullptr;
 ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
 
 const bool bVSync = true;
-const bool bWindowed = true;
+const bool bWindowed = NYA_APP_WINDOWED;
 HWND ghWnd = nullptr;
 int nResX = 640;
 int nResY = 480;
@@ -56,7 +56,7 @@ bool CreateD3DDevice() {
 	sd.OutputWindow = ghWnd;
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
-	sd.Windowed = bWindowed;
+	sd.Windowed = TRUE;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	UINT createDeviceFlags = 0;
@@ -128,10 +128,21 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+void GetDesktopResolution(int& horizontal, int& vertical) {
+	RECT desktop;
+	GetWindowRect(GetDesktopWindow(), &desktop);
+	horizontal = desktop.right;
+	vertical = desktop.bottom;
+}
+
 bool InitAppBase() {
+	if (!bWindowed) {
+		GetDesktopResolution(nResX, nResY);
+	}
+
 	WNDCLASSEX wndClass = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, sWindowName, nullptr };
 	::RegisterClassEx(&wndClass);
-	ghWnd = ::CreateWindow(wndClass.lpszClassName, sWindowName, WS_OVERLAPPEDWINDOW, 0, 0, nResX, nResY, nullptr, nullptr, wndClass.hInstance, nullptr);
+	ghWnd = ::CreateWindow(wndClass.lpszClassName, sWindowName, bWindowed ? WS_OVERLAPPEDWINDOW : WS_POPUP, 0, 0, nResX, nResY, nullptr, nullptr, wndClass.hInstance, nullptr);
 
 	if (!CreateD3DDevice()) {
 		::UnregisterClass(wndClass.lpszClassName, wndClass.hInstance);
