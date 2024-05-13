@@ -12,7 +12,7 @@ ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
 IDXGISwapChain* g_pSwapChain = nullptr;
 ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
 
-const bool bVSync = true;
+bool bVSync = true;
 const bool bWindowed = NYA_APP_WINDOWED;
 HWND ghWnd = nullptr;
 int nResX = 640;

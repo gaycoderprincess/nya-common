@@ -3,7 +3,7 @@
 
 #include "nya_commonbase.h"
 
-extern const bool bVSync;
+extern bool bVSync;
 extern const bool bWindowed;
 extern int nMouseWheelState;
 extern std::string sProgramDir;

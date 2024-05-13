@@ -141,6 +141,7 @@ std::string CapStringToWidth(const char* str, float size, float width) {
 bool IsWriteableInputCharacter(std::string& str) {
 	if (str.find(VK_BACK) != std::string::npos) return false;
 	if (str.find(VK_ESCAPE) != std::string::npos) return false;
+	if (str.find(VK_RETURN) != std::string::npos) return false;
 	return true;
 }
 
