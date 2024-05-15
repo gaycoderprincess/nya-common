@@ -96,9 +96,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 		case WM_SIZE:
 			if (g_pd3dDeviceContext && wParam != SIZE_MINIMIZED)
-			{
 				SetWindowResolution(LOWORD(lParam), HIWORD(lParam));
-			}
 			return 0;
 		case WM_CHAR: {
 			std::string inputStr;
