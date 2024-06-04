@@ -71,4 +71,5 @@ bool IsWriteableInputCharacter(std::string& str);
 void WriteStringToFile(std::ofstream& file, const char* string);
 std::string ReadStringFromFile(std::ifstream& file);
 DWORD XInputGetState_Dynamic(int dwUserIndex, XINPUT_STATE* pState);
+DWORD XInputSetState_Dynamic(int dwUserIndex, XINPUT_VIBRATION* pState);
 void CommonMain();

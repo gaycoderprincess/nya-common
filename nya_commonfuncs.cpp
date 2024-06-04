@@ -186,6 +186,27 @@ DWORD XInputGetState_Dynamic(int dwUserIndex, XINPUT_STATE* pState) {
 	return 1;
 }
 
+DWORD XInputSetState_Dynamic(int dwUserIndex, XINPUT_VIBRATION* pState) {
+	static auto funcPtr = (DWORD(WINAPI*)(DWORD, XINPUT_VIBRATION*))nullptr;
+	if (!funcPtr) {
+		const char* dlls[] = {
+				"xinput1_4.dll",
+				"xinput1_3.dll",
+				"xinput9_1_0.dll",
+				"xinput1_2.dll",
+				"xinput1_1.dll"
+		};
+		for (auto& file : dlls) {
+			if (auto dll = LoadLibraryA(file)) {
+				funcPtr = (DWORD(WINAPI*)(DWORD, XINPUT_VIBRATION*))GetProcAddress(dll, "XInputSetState");
+				break;
+			}
+		}
+	}
+	if (funcPtr) return funcPtr(dwUserIndex, pState);
+	return 1;
+}
+
 void CommonMain() {
 	NyaDrawing::DrawAll();
 
