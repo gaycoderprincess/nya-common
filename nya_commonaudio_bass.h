@@ -6,7 +6,7 @@ namespace NyaAudio {
 	typedef HSTREAM NyaSound;
 
 	bool Init(HWND hwnd);
-	HSTREAM LoadFile(const char* path);
+	NyaSound LoadFile(const char* path);
 	void Delete(NyaSound* sound);
 	void Play(NyaSound sound);
 	void Stop(NyaSound sound);

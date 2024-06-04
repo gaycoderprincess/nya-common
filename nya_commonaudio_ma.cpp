@@ -3,6 +3,8 @@
 #define MINIAUDIO_IMPLEMENTATION
 #include "miniaudio.h"
 
+#include "nya_commonaudio_ma.h"
+
 namespace NyaAudio {
 	bool bInited = false;
 	ma_engine* pEngine = nullptr;
@@ -22,7 +24,7 @@ namespace NyaAudio {
 		return true;
 	}
 
-	ma_sound* LoadFile(const char* path) {
+	NyaSound LoadFile(const char* path) {
 		ma_result result;
 		auto sound = new ma_sound;
 
@@ -35,42 +37,42 @@ namespace NyaAudio {
 		return sound;
 	}
 
-	void Delete(ma_sound** sound) {
+	void Delete(NyaSound* sound) {
 		if (!sound || !*sound) return;
 
 		ma_sound_uninit(*sound);
 		*sound = nullptr;
 	}
 
-	void Play(ma_sound* sound) {
+	void Play(NyaSound sound) {
 		ma_sound_start(sound);
 	}
 
-	void Stop(ma_sound* sound) {
+	void Stop(NyaSound sound) {
 		ma_sound_stop(sound);
 	}
 
-	uint64_t GetLength(ma_sound* sound) {
+	uint64_t GetLength(NyaSound sound) {
 		uint64_t ret;
 		ma_sound_get_length_in_pcm_frames(sound, &ret);
 		return ret;
 	}
 
-	uint64_t GetPosition(ma_sound* sound) {
+	uint64_t GetPosition(NyaSound sound) {
 		uint64_t ret;
 		ma_sound_get_cursor_in_pcm_frames(sound, &ret);
 		return ret;
 	}
 
-	void SkipTo(ma_sound* sound, uint64_t time) {
+	void SkipTo(NyaSound sound, uint64_t time) {
 		ma_sound_seek_to_pcm_frame(sound, time);
 	}
 
-	void SetVolume(ma_sound* sound, float volume) {
+	void SetVolume(NyaSound sound, float volume) {
 		ma_sound_set_volume(sound, volume);
 	}
 
-	bool IsFinishedPlaying(ma_sound* sound) {
+	bool IsFinishedPlaying(NyaSound sound) {
 		return ma_sound_at_end(sound);
 	}
 }

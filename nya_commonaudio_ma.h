@@ -1,14 +1,16 @@
 #include "miniaudio.h"
 
 namespace NyaAudio {
+	typedef ma_sound* NyaSound;
+
 	bool Init();
-	ma_sound* LoadFile(const char* path);
-	void Delete(ma_sound** sound);
-	void Play(ma_sound* sound);
-	void Stop(ma_sound* sound);
-	uint64_t GetLength(ma_sound* sound);
-	uint64_t GetPosition(ma_sound* sound);
-	void SkipTo(ma_sound* sound, uint64_t time);
-	void SetVolume(ma_sound* sound, float volume);
-	bool IsFinishedPlaying(ma_sound* sound);
+	NyaSound LoadFile(const char* path);
+	void Delete(NyaSound* sound);
+	void Play(NyaSound sound);
+	void Stop(NyaSound sound);
+	uint64_t GetLength(NyaSound sound);
+	uint64_t GetPosition(NyaSound sound);
+	void SkipTo(NyaSound sound, uint64_t time);
+	void SetVolume(NyaSound sound, float volume);
+	bool IsFinishedPlaying(NyaSound sound);
 }

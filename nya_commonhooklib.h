@@ -1,6 +1,7 @@
 #ifndef NYA_COMMON_HOOKING
 #define NYA_COMMON_HOOKING
 #include <cstdint>
+#include <psapi.h>
 
 namespace NyaHookLib {
 	template<typename T>
@@ -89,6 +90,14 @@ namespace NyaHookLib {
 
 		Patch<int32_t>(src + 1, MakeRelative(src + 1, realDest));
 		return old;
+	}
+
+	auto mEXEBase = (uintptr_t)GetModuleHandleA(nullptr);
+
+	uintptr_t GetEntryPoint() {
+		MODULEINFO info;
+		GetModuleInformation(GetCurrentProcess(), (HMODULE)mEXEBase, &info, sizeof(info));
+		return (uintptr_t)info.EntryPoint - (uintptr_t)info.lpBaseOfDll;
 	}
 }
 
