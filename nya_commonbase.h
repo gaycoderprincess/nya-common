@@ -5,4 +5,5 @@
 #include "nya_commondraw.h"
 #include "nya_commonaudio.h"
 #include "nya_commontimer.h"
+#include "nya_commonnet.h"
 #endif

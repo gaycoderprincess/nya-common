@@ -1,5 +1,6 @@
 /lib32/
 /lib64/
+/3rdparty/enet/
 /3rdparty/taglib/
 /3rdparty/toml++/
 /3rdparty/zconf.h
