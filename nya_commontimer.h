@@ -8,5 +8,5 @@ public:
 
 	CNyaTimer();
 	CNyaTimer(float minDelta);
-	void Process();
+	double Process();
 };

@@ -3,5 +3,6 @@
 /3rdparty/enet/
 /3rdparty/taglib/
 /3rdparty/toml++/
+/3rdparty/curl/
 /3rdparty/zconf.h
 /3rdparty/zlib.h
