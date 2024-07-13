@@ -153,16 +153,26 @@ namespace NyaDrawing {
 		}
 		drawList->AddText(font, scale, v, rgb, string, nullptr, 0.0f, &clipRect);
 	}
+
+	void CNyaCallback::Draw() const {
+		if (!callback) return;
+		ImGui::GetForegroundDrawList()->AddCallback(callback, nullptr);
+	}
 	CNyaRectangle aRectangles[nMaxDrawablesPerType];
 	CNyaTriangle aTriangles[nMaxDrawablesPerType];
 	CNyaText aText[nMaxDrawablesPerType];
+	CNyaCallback aCallbacks[nMaxDrawablesPerType];
 	int nNextRectangle = 0;
 	int nNextTriangle = 0;
 	int nNextText = 0;
+	int nNextCallback = 0;
 
 	void DrawAll() {
 #ifdef NYA_BACKEND_DX8
 		ImGui_ImplDX8_NewFrame();
+#endif
+#ifdef NYA_BACKEND_DX9
+		ImGui_ImplDX9_NewFrame();
 #endif
 #ifdef NYA_BACKEND_DX11
 		ImGui_ImplDX11_NewFrame();
@@ -187,6 +197,9 @@ namespace NyaDrawing {
 #ifdef NYA_BACKEND_DX8
 			ImGui_ImplDX8_RenderDrawData(drawData);
 #endif
+#ifdef NYA_BACKEND_DX9
+			ImGui_ImplDX9_RenderDrawData(drawData);
+#endif
 #ifdef NYA_BACKEND_DX11
 			ImGui_ImplDX11_RenderDrawData(drawData);
 #endif
@@ -196,6 +209,7 @@ namespace NyaDrawing {
 		nNextRectangle = 0;
 		nNextTriangle = 0;
 		nNextText = 0;
+		nNextCallback = 0;
 	}
 }
 
@@ -263,6 +277,15 @@ void DrawString(tNyaStringData data, const char* string) {
 	tmp.data = data;
 	tmp.topLevel = data.topLevel;
 	strcpy_s(tmp.string, string);
+	NyaDrawing::aDrawList.push_back(&tmp);
+}
+
+void DrawCallback(ImDrawCallback data) {
+	if (!data) return;
+	if (NyaDrawing::nNextCallback >= NyaDrawing::nMaxDrawablesPerType) return;
+
+	auto& tmp = NyaDrawing::aCallbacks[NyaDrawing::nNextCallback++];
+	tmp.callback = data;
 	NyaDrawing::aDrawList.push_back(&tmp);
 }
 

@@ -97,12 +97,20 @@ namespace NyaDrawing {
 		void Draw() const override;
 	};
 
+	class CNyaCallback : public CNyaDrawable {
+	public:
+		ImDrawCallback callback;
+
+		void Draw() const override;
+	};
+
 	void DrawAll();
 }
 
 bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding = 0, TEXTURE_TYPE* texture = nullptr, float rotation = 0);
 void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb);
 void DrawString(tNyaStringData data, const char* string);
+void DrawCallback(ImDrawCallback data);
 float GetStringWidth(float size, const char* string);
 float GetStringHeight(float size, const char* string);
 double GetAspectRatioDefault();

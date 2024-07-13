@@ -24,6 +24,15 @@ extern ID3D11RenderTargetView* g_mainRenderTargetView;
 extern IDirect3DDevice8* g_pd3dDevice;
 #endif
 
+#ifdef NYA_BACKEND_DX9
+#include <d3d9.h>
+#include "imgui_impl_dx9.h"
+
+#define TEXTURE_TYPE IDirect3DTexture9
+
+extern IDirect3DDevice9* g_pd3dDevice;
+#endif
+
 extern HWND ghWnd;
 extern int nResX;
 extern int nResY;

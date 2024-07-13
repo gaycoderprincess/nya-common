@@ -12,6 +12,15 @@ namespace NyaHookLib {
 		VirtualProtect((void*)address, sizeof(value), backup, &backup2);
 	}
 
+	void WriteString(uintptr_t address, const char* string, bool includeTerminator = true) {
+		size_t size = strlen(string) + includeTerminator;
+
+		DWORD backup, backup2;
+		VirtualProtect((void*)address, size, PAGE_EXECUTE_READWRITE, &backup);
+		memcpy((void*)address, string, size);
+		VirtualProtect((void*)address, size, backup, &backup2);
+	}
+
 	void Fill(uintptr_t address, uint8_t value, unsigned int count) {
 		DWORD backup, backup2;
 		VirtualProtect((void*)address, count, PAGE_EXECUTE_READWRITE, &backup);
@@ -30,6 +39,7 @@ namespace NyaHookLib {
 	enum eOffsetInstruction {
 		CALL,
 		JMP,
+		RAW,
 	};
 
 #ifdef __x86_64
@@ -78,7 +88,8 @@ namespace NyaHookLib {
 
 	template<typename T>
 	uintptr_t PatchRelative(eOffsetInstruction type, uintptr_t src, T dest) {
-		Patch<uint8_t>(src, type == CALL ? 0xE8 : 0xE9);
+		if (type == RAW) src -= 1;
+		else Patch<uint8_t>(src, type == CALL ? 0xE8 : 0xE9);
 		auto old = ReadRelative(src + 1);
 
 #ifdef __x86_64

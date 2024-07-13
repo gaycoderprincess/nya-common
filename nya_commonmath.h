@@ -55,7 +55,7 @@ public:
 		z /= a;
 		return *this;
 	}
-	
+
 	[[nodiscard]] inline double length() const { return Length(); } // required naming for spline library
 };
 
