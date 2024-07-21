@@ -2,10 +2,10 @@
 
 class NyaVec3 {
 public:
-	double x, y, z;
+	float x, y, z;
 
-	double operator[] (int i) const { return (&x)[i]; }
-	double& operator[] (int i) { return (&x)[i]; }
+	float operator[] (int i) const { return (&x)[i]; }
+	float& operator[] (int i) { return (&x)[i]; }
 	[[nodiscard]] double Length() const { return std::sqrt(x * x + y * y + z * z); }
 	double Normalize() {
 		auto len = Length();
@@ -21,8 +21,8 @@ public:
 	NyaVec3 operator-(const NyaVec3& a) const { return { x - a.x, y - a.y, z - a.z }; }
 	NyaVec3 operator*(const NyaVec3& a) const { return { x * a.x, y * a.y, z * a.z }; }
 	NyaVec3 operator/(const NyaVec3& a) const { return { x / a.x, y / a.y, z / a.z }; }
-	NyaVec3 operator*(const double a) const { return { x * a, y * a, z * a }; }
-	NyaVec3 operator/(const double a) const { return { x / a, y / a, z / a }; }
+	NyaVec3 operator*(const float a) const { return { x * a, y * a, z * a }; }
+	NyaVec3 operator/(const float a) const { return { x / a, y / a, z / a }; }
 	NyaVec3 operator-() const { return { -x, -y, -z }; }
 
 	NyaVec3& operator+=(const NyaVec3& a) {
@@ -59,9 +59,9 @@ public:
 	[[nodiscard]] inline double length() const { return Length(); } // required naming for spline library
 };
 
-NyaVec3 operator*(const double a, const NyaVec3& b) {
+NyaVec3 operator*(const float a, const NyaVec3& b) {
 	return { a * b.x, a * b.y, a * b.z };
 }
-NyaVec3 operator/(const double a, const NyaVec3& b) {
+NyaVec3 operator/(const float a, const NyaVec3& b) {
 	return { a / b.x, a / b.y, a / b.z };
 }
