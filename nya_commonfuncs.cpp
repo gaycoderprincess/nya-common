@@ -116,6 +116,20 @@ std::string GetTimeFromSeconds(int value) {
 	}
 }
 
+std::string GetTimeFromMilliseconds(int value) {
+	auto valueAsSeconds = value / 1000;
+	int hours = valueAsSeconds / 3600;
+	int minutes = valueAsSeconds / 60 % 60;
+	int seconds = valueAsSeconds % 60;
+	int milliseconds = value % 1000;
+
+	if (hours != 0) {
+		return std::format("{}:{:02}:{:02}.{:03}", hours, minutes, seconds, milliseconds);
+	} else {
+		return std::format("{}:{:02}.{:03}", minutes, seconds, milliseconds);
+	}
+}
+
 bool StringHasEnding (std::string const &fullString, std::string const &ending) {
 	if (fullString.length() >= ending.length()) {
 		return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));

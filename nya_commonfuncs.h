@@ -65,6 +65,7 @@ bool IsPadKeyJustPressed(int key, int padId = -1);
 int GetPadKeyState(int key, int padId = -1, bool padKeyAsButton = false);
 int GetPadLastKeyState(int key, int padId = -1, bool padKeyAsButton = false);
 std::string GetTimeFromSeconds(int value);
+std::string GetTimeFromMilliseconds(int value);
 bool StringHasEnding(std::string const &fullString, std::string const &ending);
 std::string CapStringToWidth(const char* str, float size, float width);
 bool IsWriteableInputCharacter(std::string& str);
