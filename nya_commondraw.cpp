@@ -102,7 +102,17 @@ namespace NyaDrawing {
 		v3.x = x3 * nResX;
 		v3.y = y3 * nResY;
 
-		ImGui::GetForegroundDrawList()->AddTriangleFilled(v1, v2, v3, rgb);
+		ImVec2 clipRectMin, clipRectMax;
+		clipRectMin.x = clipMinX * nResX;
+		clipRectMin.y = clipMinY * nResY;
+		clipRectMax.x = clipMaxX * nResX;
+		clipRectMax.y = clipMaxY * nResY;
+
+		auto drawList = ImGui::GetForegroundDrawList();
+
+		drawList->PushClipRect(clipRectMin, clipRectMax);
+		drawList->AddTriangleFilled(v1, v2, v3, rgb);
+		drawList->PopClipRect();
 	}
 
 	void CNyaText::Draw() const {
@@ -252,7 +262,7 @@ bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing:
 	return false;
 }
 
-void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb) {
+void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb, float clipMinX, float clipMinY, float clipMaxX, float clipMaxY) {
 	if (NyaDrawing::nNextTriangle >= NyaDrawing::nMaxDrawablesPerType) return;
 
 	auto& tmp = NyaDrawing::aTriangles[NyaDrawing::nNextTriangle++];
@@ -266,6 +276,10 @@ void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, Ny
 	tmp.g = rgb.g;
 	tmp.b = rgb.b;
 	tmp.a = rgb.a;
+	tmp.clipMinX = clipMinX;
+	tmp.clipMinY = clipMinY;
+	tmp.clipMaxX = clipMaxX;
+	tmp.clipMaxY = clipMaxY;
 	NyaDrawing::aDrawList.push_back(&tmp);
 }
 
