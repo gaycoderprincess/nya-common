@@ -239,6 +239,15 @@ namespace NyaNet {
 
 						enet_packet_destroy(event.packet);
 					} break;
+					case ENET_EVENT_TYPE_DISCONNECT: {
+						mNetMutex.lock();
+						enet_host_destroy(pLocalHost);
+						pLocalHost = nullptr;
+						pRemoteHost = nullptr;
+						ClearPacketQueue();
+						mNetMutex.unlock();
+						return;
+					} break;
 					default:
 						break;
 				}
