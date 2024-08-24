@@ -19,6 +19,7 @@ namespace NyaNet {
 	bool Host(uint16_t port, NyaStatusUpdateCallback statusUpdateCallback, NyaPacketCallback packetCallback);
 	void Disconnect();
 	bool Connect(uint32_t ip, uint16_t port, NyaStatusUpdateCallback statusUpdateCallback, NyaPacketCallback packetCallback);
+	bool SERVER_IsDuplicate(NyaNetHandle handle1, NyaNetHandle handle2);
 	void SERVER_DropClient(NyaNetHandle handle);
 	void Process();
 }

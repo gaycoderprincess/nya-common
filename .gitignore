@@ -4,5 +4,13 @@
 /3rdparty/taglib/
 /3rdparty/toml++/
 /3rdparty/curl/
+/3rdparty/assimp/
+/3rdparty/draco/
+/3rdparty/kubazip/
+/3rdparty/minizip/
+/3rdparty/poly2tri/
+/3rdparty/polyclipping/
+/3rdparty/rapidjson/
+/3rdparty/utf8cpp/
 /3rdparty/zconf.h
 /3rdparty/zlib.h

@@ -9,6 +9,7 @@ extern std::string sKeyboardInput;
 
 bool InitHookBase();
 void HookBaseLoop();
+void WndProcHook(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void HookLoop();
 void HookOnExit();
 #endif

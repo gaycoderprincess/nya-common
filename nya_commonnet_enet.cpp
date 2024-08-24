@@ -171,6 +171,11 @@ namespace NyaNet {
 		std::thread(ServerLoop).detach();
 		return true;
 	}
+	bool SERVER_IsDuplicate(NyaNetHandle handle1, NyaNetHandle handle2) {
+		if (!handle1) return false;
+		if (!handle2) return false;
+		return handle1->address.host == handle2->address.host;
+	}
 	void SERVER_DropClient(NyaNetHandle handle) {
 		if (!handle) return;
 

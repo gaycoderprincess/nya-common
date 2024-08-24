@@ -14,6 +14,6 @@ double CNyaTimer::Process() {
 	tLastUpdate = now;
 
 	if (fDeltaTime > fMinDelta) fDeltaTime = fMinDelta;
-
+	fTotalTime += fDeltaTime;
 	return fDeltaTime;
 }
