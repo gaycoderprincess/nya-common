@@ -105,10 +105,14 @@ namespace NyaHookLib {
 
 	auto mEXEBase = (uintptr_t)GetModuleHandleA(nullptr);
 
-	uintptr_t GetEntryPoint() {
+	uintptr_t GetEntryPoint(HMODULE module) {
 		MODULEINFO info;
-		GetModuleInformation(GetCurrentProcess(), (HMODULE)mEXEBase, &info, sizeof(info));
+		GetModuleInformation(GetCurrentProcess(), module, &info, sizeof(info));
 		return (uintptr_t)info.EntryPoint - (uintptr_t)info.lpBaseOfDll;
+	}
+
+	uintptr_t GetEntryPoint() {
+		return GetEntryPoint((HMODULE)mEXEBase);
 	}
 }
 
