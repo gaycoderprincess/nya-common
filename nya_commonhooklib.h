@@ -3,6 +3,10 @@
 #include <cstdint>
 #include <psapi.h>
 
+const char* aFO1VersionFail = "Unsupported game version! Make sure you're using v1.1 (.exe size of 2822144 bytes)\n\nYou can acquire this .exe from ZPatch FO1.\n\nNote that the newest \"\"update\"\" is not supported.";
+const char* aFO2VersionFail = "Unsupported game version! Make sure you're using DRM-free v1.2 (.exe size of 2990080 bytes)\n\nYou can acquire this .exe from Selo's Car Pack or ZPatch FO2.\n\nNote that the newest \"\"update\"\" is not supported.";
+const char* aFOUCVersionFail = "Unsupported game version! Make sure you're using the Steam GFWL version (.exe size of 4242504 bytes)\n\nNote that the newest \"\"update\"\" is not supported.";
+
 namespace NyaHookLib {
 	template<typename T>
 	void Patch(uintptr_t address, T value) {
