@@ -52,6 +52,7 @@ namespace NyaDrawing {
 	class CNyaDrawable {
 	public:
 		bool topLevel = false;
+		bool drawAfterImGui = false;
 
 		virtual void Draw() const = 0;
 	};
@@ -97,6 +98,7 @@ namespace NyaDrawing {
 	public:
 		tNyaStringData data;
 		char string[1024] = "";
+		void(*drawFunc)(const tNyaStringData&, const std::string&) = nullptr;
 
 		void Draw() const override;
 	};
@@ -113,7 +115,7 @@ namespace NyaDrawing {
 
 bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding = 0, TEXTURE_TYPE* texture = nullptr, float rotation = 0);
 void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb, float clipMinX = 0, float clipMinY = 0, float clipMaxX = 1, float clipMaxY = 1);
-void DrawString(tNyaStringData data, const char* string);
+void DrawString(const tNyaStringData& data, const std::string& string, void(*drawFunc)(const tNyaStringData&, const std::string&) = nullptr);
 void DrawCallback(ImDrawCallback data);
 float GetStringWidth(float size, const char* string);
 float GetStringHeight(float size, const char* string);

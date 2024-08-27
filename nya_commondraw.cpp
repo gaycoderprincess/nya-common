@@ -119,6 +119,11 @@ namespace NyaDrawing {
 		if (!string[0]) return;
 		if (!data.a && !data.outlinea) return;
 
+		if (auto func = drawFunc) {
+			drawFunc(data, string);
+			return;
+		}
+
 		CNyaRGBA32 rgb;
 		rgb.r = data.r;
 		rgb.g = data.g;
@@ -190,10 +195,14 @@ namespace NyaDrawing {
 		ImGui::NewFrame();
 
 		for (auto& drawable : aDrawList) {
-			if (!drawable->topLevel) drawable->Draw();
+			if (drawable->drawAfterImGui) continue;
+			if (drawable->topLevel) continue;
+			drawable->Draw();
 		}
 		for (auto& drawable : aDrawList) {
-			if (drawable->topLevel) drawable->Draw();
+			if (drawable->drawAfterImGui) continue;
+			if (!drawable->topLevel) continue;
+			drawable->Draw();
 		}
 
 		ImGui::Render();
@@ -213,6 +222,17 @@ namespace NyaDrawing {
 #ifdef NYA_BACKEND_DX11
 			ImGui_ImplDX11_RenderDrawData(drawData);
 #endif
+		}
+
+		for (auto& drawable : aDrawList) {
+			if (!drawable->drawAfterImGui) continue;
+			if (drawable->topLevel) continue;
+			drawable->Draw();
+		}
+		for (auto& drawable : aDrawList) {
+			if (!drawable->drawAfterImGui) continue;
+			if (!drawable->topLevel) continue;
+			drawable->Draw();
 		}
 
 		NyaDrawing::aDrawList.clear();
@@ -283,14 +303,16 @@ void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, Ny
 	NyaDrawing::aDrawList.push_back(&tmp);
 }
 
-void DrawString(tNyaStringData data, const char* string) {
-	if (!string) return;
+void DrawString(const tNyaStringData& data, const std::string& string, void(*drawFunc)(const tNyaStringData&, const std::string&)) {
+	if (string.empty()) return;
 	if (NyaDrawing::nNextText >= NyaDrawing::nMaxDrawablesPerType) return;
 
 	auto& tmp = NyaDrawing::aText[NyaDrawing::nNextText++];
 	tmp.data = data;
+	tmp.drawFunc = drawFunc;
+	tmp.drawAfterImGui = drawFunc != nullptr;
 	tmp.topLevel = data.topLevel;
-	strcpy_s(tmp.string, string);
+	strcpy_s(tmp.string, string.c_str());
 	NyaDrawing::aDrawList.push_back(&tmp);
 }
 
