@@ -16,7 +16,7 @@ public:
 	}
 
 	[[nodiscard]] NyaVec3 Cross(const NyaVec3& a) const { return { y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x }; }
-	[[nodiscard]] NyaVec3 Dot(const NyaVec3& a) const { return { x * a.x + y * a.y + z * a.z }; }
+	[[nodiscard]] float Dot(const NyaVec3& a) const { return x * a.x + y * a.y + z * a.z; }
 	NyaVec3 operator+(const NyaVec3& a) const { return { x + a.x, y + a.y, z + a.z }; }
 	NyaVec3 operator-(const NyaVec3& a) const { return { x - a.x, y - a.y, z - a.z }; }
 	NyaVec3 operator*(const NyaVec3& a) const { return { x * a.x, y * a.y, z * a.z }; }

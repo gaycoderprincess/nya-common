@@ -1,7 +1,7 @@
 #include "enet/enet.h"
 
 namespace NyaNet {
-	const uint32_t nMaxPossiblePlayers = 256;
+	const uint32_t nMaxPossiblePlayers = NYANET_MAXPLAYERS;
 
 	typedef ENetPeer* NyaNetHandle;
 	typedef void (*NyaStatusUpdateCallback) (bool connected, NyaNetHandle handle);
