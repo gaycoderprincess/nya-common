@@ -32,14 +32,18 @@ struct tNyaPadState {
 		keys[NYA_PAD_KEY_Y] = state.Gamepad.wButtons & XINPUT_GAMEPAD_Y;
 		keys[NYA_PAD_KEY_LT] = state.Gamepad.bLeftTrigger > gTriggerDeadzone ? state.Gamepad.bLeftTrigger : 0;
 		keys[NYA_PAD_KEY_RT] = state.Gamepad.bRightTrigger > gTriggerDeadzone ? state.Gamepad.bRightTrigger : 0;
-		keys[NYA_PAD_KEY_LSTICK_X_NEG] = abs(state.Gamepad.sThumbLX) > gStickDeadzone ? state.Gamepad.sThumbLX : 0;
-		keys[NYA_PAD_KEY_LSTICK_X_POS] = abs(state.Gamepad.sThumbLX) > gStickDeadzone ? state.Gamepad.sThumbLX : 0;
-		keys[NYA_PAD_KEY_LSTICK_Y_NEG] = abs(state.Gamepad.sThumbLY) > gStickDeadzone ? state.Gamepad.sThumbLY : 0;
-		keys[NYA_PAD_KEY_LSTICK_Y_POS] = abs(state.Gamepad.sThumbLY) > gStickDeadzone ? state.Gamepad.sThumbLY : 0;
-		keys[NYA_PAD_KEY_RSTICK_X_NEG] = abs(state.Gamepad.sThumbRX) > gStickDeadzone ? state.Gamepad.sThumbRX : 0;
-		keys[NYA_PAD_KEY_RSTICK_X_POS] = abs(state.Gamepad.sThumbRX) > gStickDeadzone ? state.Gamepad.sThumbRX : 0;
-		keys[NYA_PAD_KEY_RSTICK_Y_NEG] = abs(state.Gamepad.sThumbRY) > gStickDeadzone ? state.Gamepad.sThumbRY : 0;
-		keys[NYA_PAD_KEY_RSTICK_Y_POS] = abs(state.Gamepad.sThumbRY) > gStickDeadzone ? state.Gamepad.sThumbRY : 0;
+		keys[NYA_PAD_KEY_LSTICK_X] = abs(state.Gamepad.sThumbLX) > gStickDeadzone ? state.Gamepad.sThumbLX : 0;
+		keys[NYA_PAD_KEY_LSTICK_Y] = abs(state.Gamepad.sThumbLY) > gStickDeadzone ? state.Gamepad.sThumbLY : 0;
+		keys[NYA_PAD_KEY_RSTICK_X] = abs(state.Gamepad.sThumbRX) > gStickDeadzone ? state.Gamepad.sThumbRX : 0;
+		keys[NYA_PAD_KEY_RSTICK_Y] = abs(state.Gamepad.sThumbRY) > gStickDeadzone ? state.Gamepad.sThumbRY : 0;
+		keys[NYA_PAD_KEY_LSTICK_X_NEG] = keys[NYA_PAD_KEY_LSTICK_X];
+		keys[NYA_PAD_KEY_LSTICK_X_POS] = keys[NYA_PAD_KEY_LSTICK_X];
+		keys[NYA_PAD_KEY_LSTICK_Y_NEG] = keys[NYA_PAD_KEY_LSTICK_Y];
+		keys[NYA_PAD_KEY_LSTICK_Y_POS] = keys[NYA_PAD_KEY_LSTICK_Y];
+		keys[NYA_PAD_KEY_RSTICK_X_NEG] = keys[NYA_PAD_KEY_RSTICK_X];
+		keys[NYA_PAD_KEY_RSTICK_X_POS] = keys[NYA_PAD_KEY_RSTICK_X];
+		keys[NYA_PAD_KEY_RSTICK_Y_NEG] = keys[NYA_PAD_KEY_RSTICK_Y];
+		keys[NYA_PAD_KEY_RSTICK_Y_POS] = keys[NYA_PAD_KEY_RSTICK_Y];
 
 		if (keys[NYA_PAD_KEY_LSTICK_X_NEG] > 0) keys[NYA_PAD_KEY_LSTICK_X_NEG] = 0;
 		if (keys[NYA_PAD_KEY_LSTICK_Y_NEG] > 0) keys[NYA_PAD_KEY_LSTICK_Y_NEG] = 0;
@@ -69,7 +73,7 @@ int GetPadKeyState(tNyaPadState* pads, int key, int padId, bool padKeyAsButton) 
 	// get highest value of all pads if -1
 	int value = 0;
 	for (int i = 0; i < XUSER_MAX_COUNT; i++) {
-		if (abs(pads[i].GetKey(key, padKeyAsButton)) > value) value = pads[i].GetKey(key, padKeyAsButton);
+		if (abs(pads[i].GetKey(key, padKeyAsButton)) > abs(value)) value = pads[i].GetKey(key, padKeyAsButton);
 	}
 	return value;
 }
