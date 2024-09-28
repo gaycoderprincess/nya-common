@@ -1,3 +1,6 @@
+#ifndef NYA_MATH_H
+#define NYA_MATH_H
+
 #include <cmath>
 
 class NyaVec3 {
@@ -115,3 +118,4 @@ NyaVec3 operator*(const NyaMat4x4& a, const NyaVec3& b) {
 	out.z = a.x.z * b.x + a.y.z * b.y + a.z.z * b.z + a.p.z;
 	return out;
 }
+#endif
