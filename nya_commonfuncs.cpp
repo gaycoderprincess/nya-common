@@ -120,17 +120,20 @@ std::string GetTimeFromSeconds(int value) {
 	}
 }
 
-std::string GetTimeFromMilliseconds(int value) {
+std::string GetTimeFromMilliseconds(int value, bool altFormat) {
 	auto valueAsSeconds = value / 1000;
 	int hours = valueAsSeconds / 3600;
 	int minutes = valueAsSeconds / 60 % 60;
 	int seconds = valueAsSeconds % 60;
 	int milliseconds = value % 1000;
 
+	const char* separator1 = altFormat ? "\'\'" : ".";
+	const char* separator2 = altFormat ? "\'" : ":";
+
 	if (hours != 0) {
-		return std::format("{}:{:02}:{:02}.{:03}", hours, minutes, seconds, milliseconds);
+		return std::format("{}{}{:02}{}{:02}{}{:03}", hours, separator2, minutes, separator2, seconds, separator1, milliseconds);
 	} else {
-		return std::format("{}:{:02}.{:03}", minutes, seconds, milliseconds);
+		return std::format("{}{}{:02}{}{:03}", minutes, separator2, seconds, separator1, milliseconds);
 	}
 }
 
@@ -225,8 +228,8 @@ DWORD XInputSetState_Dynamic(int dwUserIndex, XINPUT_VIBRATION* pState) {
 	return 1;
 }
 
-void CommonMain() {
-	NyaDrawing::DrawAll();
+void CommonMain(bool doDrawing) {
+	if (doDrawing) NyaDrawing::DrawAll();
 
 	if (!bDontRefreshInputsThisLoop) {
 		memcpy(bKeyPressedLast, bKeyPressed, sizeof(bKeyPressed));
