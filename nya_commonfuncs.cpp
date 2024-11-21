@@ -234,7 +234,9 @@ void CommonMain(bool doDrawing) {
 	if (!bDontRefreshInputsThisLoop) {
 		memcpy(bKeyPressedLast, bKeyPressed, sizeof(bKeyPressed));
 
+#ifndef NYA_INPUT_RUN_IN_BACKGROUND
 		if (IsWindowInFocus()) {
+#endif
 			for (int i = 0; i < 255; i++) {
 				bKeyPressed[i] = (GetAsyncKeyState(i) & 0x8000) != 0;
 			}
@@ -251,10 +253,12 @@ void CommonMain(bool doDrawing) {
 					memset(&gPadState[i], 0, sizeof(gPadState[i]));
 				}
 			}
+#ifndef NYA_INPUT_RUN_IN_BACKGROUND
 		} else {
 			memset(bKeyPressed, 0, sizeof(bKeyPressed));
 			memset(gPadState, 0, sizeof(gPadState));
 		}
+#endif
 	}
 	bDontRefreshInputsThisLoop = false;
 }

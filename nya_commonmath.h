@@ -3,12 +3,13 @@
 
 #include <cmath>
 
-class NyaVec3 {
+template<typename T>
+class NyaVec3Custom {
 public:
-	float x, y, z;
+	T x, y, z;
 
-	float operator[] (int i) const { return (&x)[i]; }
-	float& operator[] (int i) { return (&x)[i]; }
+	T operator[] (int i) const { return (&x)[i]; }
+	T& operator[] (int i) { return (&x)[i]; }
 	[[nodiscard]] double Length() const { return std::sqrt(x * x + y * y + z * z); }
 	double Normalize() {
 		auto len = Length();
@@ -18,41 +19,41 @@ public:
 		return len;
 	}
 
-	[[nodiscard]] NyaVec3 Cross(const NyaVec3& a) const { return { y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x }; }
-	[[nodiscard]] float Dot(const NyaVec3& a) const { return x * a.x + y * a.y + z * a.z; }
-	NyaVec3 operator+(const NyaVec3& a) const { return { x + a.x, y + a.y, z + a.z }; }
-	NyaVec3 operator-(const NyaVec3& a) const { return { x - a.x, y - a.y, z - a.z }; }
-	NyaVec3 operator*(const NyaVec3& a) const { return { x * a.x, y * a.y, z * a.z }; }
-	NyaVec3 operator/(const NyaVec3& a) const { return { x / a.x, y / a.y, z / a.z }; }
-	NyaVec3 operator*(const float a) const { return { x * a, y * a, z * a }; }
-	NyaVec3 operator/(const float a) const { return { x / a, y / a, z / a }; }
-	NyaVec3 operator-() const { return { -x, -y, -z }; }
+	[[nodiscard]] NyaVec3Custom Cross(const NyaVec3Custom& a) const { return { y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x }; }
+	[[nodiscard]] double Dot(const NyaVec3Custom& a) const { return x * a.x + y * a.y + z * a.z; }
+	NyaVec3Custom operator+(const NyaVec3Custom& a) const { return { x + a.x, y + a.y, z + a.z }; }
+	NyaVec3Custom operator-(const NyaVec3Custom& a) const { return { x - a.x, y - a.y, z - a.z }; }
+	NyaVec3Custom operator*(const NyaVec3Custom& a) const { return { x * a.x, y * a.y, z * a.z }; }
+	NyaVec3Custom operator/(const NyaVec3Custom& a) const { return { x / a.x, y / a.y, z / a.z }; }
+	NyaVec3Custom operator*(const double a) const { return NyaVec3Custom(x * a, y * a, z * a); }
+	NyaVec3Custom operator/(const double a) const { return { x / a, y / a, z / a }; }
+	NyaVec3Custom operator-() const { return { -x, -y, -z }; }
 
-	NyaVec3& operator+=(const NyaVec3& a) {
+	NyaVec3Custom& operator+=(const NyaVec3Custom& a) {
 		x += a.x;
 		y += a.y;
 		z += a.z;
 		return *this;
 	}
-	NyaVec3& operator-=(const NyaVec3& a) {
+	NyaVec3Custom& operator-=(const NyaVec3Custom& a) {
 		x -= a.x;
 		y -= a.y;
 		z -= a.z;
 		return *this;
 	}
-	NyaVec3& operator*=(const NyaVec3& a) {
+	NyaVec3Custom& operator*=(const NyaVec3Custom& a) {
 		x *= a.x;
 		y *= a.y;
 		z *= a.z;
 		return *this;
 	}
-	NyaVec3& operator*=(const double a) {
+	NyaVec3Custom& operator*=(const double a) {
 		x *= a;
 		y *= a;
 		z *= a;
 		return *this;
 	}
-	NyaVec3& operator/=(const double a) {
+	NyaVec3Custom& operator/=(const double a) {
 		x /= a;
 		y /= a;
 		z /= a;
@@ -61,6 +62,9 @@ public:
 
 	[[nodiscard]] inline double length() const { return Length(); } // required naming for spline library
 };
+
+typedef NyaVec3Custom<float> NyaVec3;
+typedef NyaVec3Custom<double> NyaVec3Double;
 
 NyaVec3 operator*(const float a, const NyaVec3& b) {
 	return { a * b.x, a * b.y, a * b.z };
@@ -137,6 +141,17 @@ public:
 	void Rotate(NyaVec3 angle) {
 		auto tmp = *this;
 
+#ifdef NYA_MATH_Z_UP
+		double x1 = std::cos(angle.z) * std::cos(angle.y) - (std::sin(angle.z) * std::sin(angle.x)) * std::sin(angle.y);
+		double x2 = (std::cos(angle.z) * std::sin(angle.x)) * std::sin(angle.y) + std::sin(angle.z) * std::cos(angle.y);
+		double x3 = -std::cos(angle.x) * std::sin(angle.y);
+		double y1 = -std::sin(angle.z) * std::cos(angle.x);
+		double y2 = std::cos(angle.z) * std::cos(angle.x);
+		double y3 = std::sin(angle.x);
+		double z1 = (std::sin(angle.z) * std::sin(angle.x)) * std::cos(angle.y) + std::cos(angle.z) * std::sin(angle.y);
+		double z2 = std::sin(angle.z) * std::sin(angle.y) - (std::cos(angle.z) * std::sin(angle.x)) * std::cos(angle.y);
+		double z3 = std::cos(angle.x) * std::cos(angle.y);
+#else
 		double x1 = std::cos(angle.z) * std::cos(angle.y) - (std::sin(angle.z) * std::sin(angle.x)) * std::sin(angle.y);
 		double x2 = -std::cos(angle.x) * std::sin(angle.y);
 		double x3 = (std::cos(angle.z) * std::sin(angle.x)) * std::sin(angle.y) + std::sin(angle.z) * std::cos(angle.y);
@@ -146,6 +161,7 @@ public:
 		double z1 = -std::sin(angle.z) * std::cos(angle.x);
 		double z2 = std::sin(angle.x);
 		double z3 = std::cos(angle.z) * std::cos(angle.x);
+#endif
 
 		x.x = x1 * tmp.x.x + y1 * tmp.x.y + z1 * tmp.x.z;
 		x.y = x2 * tmp.x.x + y2 * tmp.x.y + z2 * tmp.x.z;
