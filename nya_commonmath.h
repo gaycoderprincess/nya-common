@@ -6,7 +6,9 @@
 template<typename T>
 class NyaVec3Custom {
 public:
-	T x, y, z;
+	T x = 0;
+	T y = 0;
+	T z = 0;
 
 	T operator[] (int i) const { return (&x)[i]; }
 	T& operator[] (int i) { return (&x)[i]; }
@@ -84,6 +86,12 @@ public:
 	NyaVec3 p;
 	float pw;
 
+#ifdef NYA_MATH_Z_UP
+	static inline bool bZUp = true;
+#else
+	static inline bool bZUp = false;
+#endif
+
 	NyaMat4x4() {
 		SetIdentity();
 	}
@@ -141,27 +149,38 @@ public:
 	void Rotate(NyaVec3 angle) {
 		auto tmp = *this;
 
-#ifdef NYA_MATH_Z_UP
-		double x1 = std::cos(angle.z) * std::cos(angle.y) - (std::sin(angle.z) * std::sin(angle.x)) * std::sin(angle.y);
-		double x2 = (std::cos(angle.z) * std::sin(angle.x)) * std::sin(angle.y) + std::sin(angle.z) * std::cos(angle.y);
-		double x3 = -std::cos(angle.x) * std::sin(angle.y);
-		double y1 = -std::sin(angle.z) * std::cos(angle.x);
-		double y2 = std::cos(angle.z) * std::cos(angle.x);
-		double y3 = std::sin(angle.x);
-		double z1 = (std::sin(angle.z) * std::sin(angle.x)) * std::cos(angle.y) + std::cos(angle.z) * std::sin(angle.y);
-		double z2 = std::sin(angle.z) * std::sin(angle.y) - (std::cos(angle.z) * std::sin(angle.x)) * std::cos(angle.y);
-		double z3 = std::cos(angle.x) * std::cos(angle.y);
-#else
-		double x1 = std::cos(angle.z) * std::cos(angle.y) - (std::sin(angle.z) * std::sin(angle.x)) * std::sin(angle.y);
-		double x2 = -std::cos(angle.x) * std::sin(angle.y);
-		double x3 = (std::cos(angle.z) * std::sin(angle.x)) * std::sin(angle.y) + std::sin(angle.z) * std::cos(angle.y);
-		double y1 = (std::sin(angle.z) * std::sin(angle.x)) * std::cos(angle.y) + std::cos(angle.z) * std::sin(angle.y);
-		double y2 = std::cos(angle.x) * std::cos(angle.y);
-		double y3 = std::sin(angle.z) * std::sin(angle.y) - (std::cos(angle.z) * std::sin(angle.x)) * std::cos(angle.y);
-		double z1 = -std::sin(angle.z) * std::cos(angle.x);
-		double z2 = std::sin(angle.x);
-		double z3 = std::cos(angle.z) * std::cos(angle.x);
-#endif
+		double x1;
+		double x2;
+		double x3;
+		double y1;
+		double y2;
+		double y3;
+		double z1;
+		double z2;
+		double z3;
+
+		if (bZUp) {
+			x1 = std::cos(angle.z) * std::cos(angle.y) - (std::sin(angle.z) * std::sin(angle.x)) * std::sin(angle.y);
+			x2 = (std::cos(angle.z) * std::sin(angle.x)) * std::sin(angle.y) + std::sin(angle.z) * std::cos(angle.y);
+			x3 = -std::cos(angle.x) * std::sin(angle.y);
+			y1 = -std::sin(angle.z) * std::cos(angle.x);
+			y2 = std::cos(angle.z) * std::cos(angle.x);
+			y3 = std::sin(angle.x);
+			z1 = (std::sin(angle.z) * std::sin(angle.x)) * std::cos(angle.y) + std::cos(angle.z) * std::sin(angle.y);
+			z2 = std::sin(angle.z) * std::sin(angle.y) - (std::cos(angle.z) * std::sin(angle.x)) * std::cos(angle.y);
+			z3 = std::cos(angle.x) * std::cos(angle.y);
+		}
+		else {
+			x1 = std::cos(angle.z) * std::cos(angle.y) - (std::sin(angle.z) * std::sin(angle.x)) * std::sin(angle.y);
+			x2 = -std::cos(angle.x) * std::sin(angle.y);
+			x3 = (std::cos(angle.z) * std::sin(angle.x)) * std::sin(angle.y) + std::sin(angle.z) * std::cos(angle.y);
+			y1 = (std::sin(angle.z) * std::sin(angle.x)) * std::cos(angle.y) + std::cos(angle.z) * std::sin(angle.y);
+			y2 = std::cos(angle.x) * std::cos(angle.y);
+			y3 = std::sin(angle.z) * std::sin(angle.y) - (std::cos(angle.z) * std::sin(angle.x)) * std::cos(angle.y);
+			z1 = -std::sin(angle.z) * std::cos(angle.x);
+			z2 = std::sin(angle.x);
+			z3 = std::cos(angle.z) * std::cos(angle.x);
+		}
 
 		x.x = x1 * tmp.x.x + y1 * tmp.x.y + z1 * tmp.x.z;
 		x.y = x2 * tmp.x.x + y2 * tmp.x.y + z2 * tmp.x.z;
