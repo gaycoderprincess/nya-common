@@ -3,6 +3,18 @@
 
 #include <cmath>
 
+#ifdef NYA_MATH_NO_TEMPLATES
+#define NyaVec3Custom NyaVec3
+
+class NyaVec3Custom {
+public:
+	float x = 0;
+	float y = 0;
+	float z = 0;
+
+	float operator[] (int i) const { return (&x)[i]; }
+	float& operator[] (int i) { return (&x)[i]; }
+#else
 template<typename T>
 class NyaVec3Custom {
 public:
@@ -12,6 +24,7 @@ public:
 
 	T operator[] (int i) const { return (&x)[i]; }
 	T& operator[] (int i) { return (&x)[i]; }
+#endif
 	[[nodiscard]] double Length() const { return std::sqrt(x * x + y * y + z * z); }
 	[[nodiscard]] double LengthSqr() const { return x * x + y * y + z * z; }
 	double Normalize() {
@@ -72,8 +85,10 @@ public:
 	[[nodiscard]] inline double length() const { return Length(); } // required naming for spline library
 };
 
+#ifndef NYA_MATH_NO_TEMPLATES
 typedef NyaVec3Custom<float> NyaVec3;
 typedef NyaVec3Custom<double> NyaVec3Double;
+#endif
 
 NyaVec3 operator*(const float a, const NyaVec3& b) {
 	return { a * b.x, a * b.y, a * b.z };
