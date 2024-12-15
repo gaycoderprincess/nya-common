@@ -13,6 +13,7 @@ public:
 	T operator[] (int i) const { return (&x)[i]; }
 	T& operator[] (int i) { return (&x)[i]; }
 	[[nodiscard]] double Length() const { return std::sqrt(x * x + y * y + z * z); }
+	[[nodiscard]] double LengthSqr() const { return x * x + y * y + z * z; }
 	double Normalize() {
 		auto len = Length();
 		x /= len;
@@ -53,6 +54,12 @@ public:
 		x *= a;
 		y *= a;
 		z *= a;
+		return *this;
+	}
+	NyaVec3Custom& operator/=(const NyaVec3Custom& a) {
+		x /= a.x;
+		y /= a.y;
+		z /= a.z;
 		return *this;
 	}
 	NyaVec3Custom& operator/=(const double a) {
