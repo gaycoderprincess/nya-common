@@ -2,7 +2,9 @@
 #include <cstdint>
 #include <codecvt>
 #include <locale>
+#ifndef NYA_COMMON_NO_D3DX9
 #include <d3dx9.h>
+#endif
 
 #include "nya_dx9_hookbase.h"
 
@@ -95,6 +97,7 @@ int GetMouseWheelState() {
 	return nMouseWheelState;
 }
 
+#ifndef NYA_COMMON_NO_D3DX9
 PDIRECT3DTEXTURE9 LoadTexture(const char* fileName) {
 	PDIRECT3DTEXTURE9 texture;
 	auto hr = D3DXCreateTextureFromFileA(g_pd3dDevice, fileName, &texture);
@@ -103,3 +106,4 @@ PDIRECT3DTEXTURE9 LoadTexture(const char* fileName) {
 	}
 	return texture;
 }
+#endif
