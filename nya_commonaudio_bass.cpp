@@ -20,8 +20,8 @@ namespace NyaAudio {
 		return 0;
 	}
 
-	NyaSound LoadMemory(const char* data) {
-		if (auto sound = BASS_StreamCreateFile(true, data, 0, 0, BASS_STREAM_PRESCAN)) {
+	NyaSound LoadMemory(const char* data, size_t size) {
+		if (auto sound = BASS_StreamCreateFile(true, data, 0, size, BASS_STREAM_PRESCAN)) {
 			return sound;
 		}
 		return 0;

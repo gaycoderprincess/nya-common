@@ -7,7 +7,7 @@ namespace NyaAudio {
 
 	bool Init(HWND hwnd);
 	NyaSound LoadFile(const char* path);
-	NyaSound LoadMemory(const char* data);
+	NyaSound LoadMemory(const char* data, size_t size);
 	void Delete(NyaSound* sound);
 	void Play(NyaSound sound);
 	void Stop(NyaSound sound);
