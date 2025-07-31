@@ -8,6 +8,13 @@ void tNyaStringData::SetColor(const NyaDrawing::CNyaRGBA32* color) {
 	this->a = color->a;
 }
 
+void tNyaStringData::SetColor(const NyaDrawing::CNyaRGBA32& color) {
+	this->r = color.r;
+	this->g = color.g;
+	this->b = color.b;
+	this->a = color.a;
+}
+
 void tNyaStringData::SetColor(int r, int g, int b, int a) {
 	this->r = r;
 	this->g = g;
@@ -20,6 +27,13 @@ void tNyaStringData::SetOutlineColor(const NyaDrawing::CNyaRGBA32* color) {
 	this->outlineg = color->g;
 	this->outlineb = color->b;
 	this->outlinea = color->a;
+}
+
+void tNyaStringData::SetOutlineColor(const NyaDrawing::CNyaRGBA32& color) {
+	this->outliner = color.r;
+	this->outlineg = color.g;
+	this->outlineb = color.b;
+	this->outlinea = color.a;
 }
 
 void tNyaStringData::SetOutlineColor(int r, int g, int b, int a) {
