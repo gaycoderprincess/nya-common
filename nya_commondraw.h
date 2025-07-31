@@ -70,6 +70,10 @@ namespace NyaDrawing {
 		uint8_t b = 0;
 		uint8_t a = 0;
 		TEXTURE_TYPE* texture = nullptr;
+		float uvx1 = 0;
+		float uvy1 = 0;
+		float uvx2 = 1;
+		float uvy2 = 1;
 
 		void Draw() const override;
 	};
@@ -113,7 +117,7 @@ namespace NyaDrawing {
 	void DrawAll();
 }
 
-bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding = 0, TEXTURE_TYPE* texture = nullptr, float rotation = 0);
+bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding = 0, TEXTURE_TYPE* texture = nullptr, float rotation = 0, ImVec2 uvMin = {0,0}, ImVec2 uvMax = {1,1});
 void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb, float clipMinX = 0, float clipMinY = 0, float clipMaxX = 1, float clipMaxY = 1);
 void DrawString(const tNyaStringData& data, const std::string& string, void(*drawFunc)(const tNyaStringData&, const std::string&) = nullptr);
 void DrawCallback(ImDrawCallback data);

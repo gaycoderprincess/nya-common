@@ -76,10 +76,13 @@ namespace NyaDrawing {
 		v2.x = x2 * nResX;
 		v2.y = y2 * nResY;
 
+		ImVec2 v3 = {uvx1, uvy1};
+		ImVec2 v4 = {uvx2, uvy2};
+
 		auto drawList = ImGui::GetForegroundDrawList();
 		if (texture) {
 			if (rotation != 0.0) ImageRotated(drawList, texture, ImVec2((v1.x + v2.x) * 0.5, (v1.y + v2.y) * 0.5), ImVec2(v2.x - v1.x, v2.y - v1.y), rotation, rgb);
-			else drawList->AddImageRounded(texture, v1, v2, ImVec2(0, 0), ImVec2(1, 1), rgb, rounding * nResY, 0);
+			else drawList->AddImageRounded(texture, v1, v2, v3, v4, rgb, rounding * nResY, 0);
 		}
 		else drawList->AddRectFilled(v1, v2, rgb, rounding * nResY, 0);
 	}
@@ -257,7 +260,7 @@ float GetStringHeight(float size, const char* string) {
 	return ImGui::GetFont()->CalcTextSizeA(scale, FLT_MAX, 0, string).y / (double)nResY;
 }
 
-bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding, TEXTURE_TYPE* texture, float rotation) {
+bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding, TEXTURE_TYPE* texture, float rotation, ImVec2 uvMin, ImVec2 uvMax) {
 	if (NyaDrawing::nNextRectangle >= NyaDrawing::nMaxDrawablesPerType) return false;
 
 	auto& tmp = NyaDrawing::aRectangles[NyaDrawing::nNextRectangle++];
@@ -272,6 +275,10 @@ bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing:
 	tmp.rounding = rounding;
 	tmp.texture = texture;
 	tmp.rotation = rotation;
+	tmp.uvx1 = uvMin.x;
+	tmp.uvy1 = uvMin.y;
+	tmp.uvx2 = uvMax.x;
+	tmp.uvy2 = uvMax.y;
 	NyaDrawing::aDrawList.push_back(&tmp);
 
 	if (!IsWindowInFocus()) return false;
