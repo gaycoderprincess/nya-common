@@ -20,6 +20,13 @@ namespace NyaAudio {
 		return 0;
 	}
 
+	NyaSound LoadFileStreamed(const char* path) {
+		if (auto sound = BASS_StreamCreateFile(false, path, 0, 0, BASS_ASYNCFILE)) {
+			return sound;
+		}
+		return 0;
+	}
+
 	NyaSound LoadMemory(const char* data, size_t size) {
 		if (auto sound = BASS_StreamCreateFile(true, data, 0, size, BASS_STREAM_PRESCAN)) {
 			return sound;
@@ -50,7 +57,8 @@ namespace NyaAudio {
 		return BASS_ChannelGetPosition(sound, 0);
 	}
 
-	void SkipTo(NyaSound sound, uint64_t time) {
+	void SkipTo(NyaSound sound, uint64_t time, bool useRealTime) {
+		if (useRealTime) time = BASS_ChannelSeconds2Bytes(sound, time*0.001);
 		BASS_ChannelSetPosition(sound, time, 0);
 	}
 
