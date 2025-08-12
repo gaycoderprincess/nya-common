@@ -7,9 +7,9 @@
 struct tNyaPadState {
 	int32_t keys[NUM_NYA_PAD_KEYS];
 
-	const static int gTriggerDeadzone = 16;
-	const static int gStickDeadzone = 2048;
-	const static int gStickAsButtonDeadzone = 16383;
+	static inline int gTriggerDeadzone = 16;
+	static inline int gStickDeadzone = 2048;
+	static inline int gStickAsButtonDeadzone = 16383;
 
 	tNyaPadState() {
 		memset(this, 0, sizeof(*this));
@@ -92,6 +92,10 @@ bool IsPadKeyPressed(int key, int padId) {
 
 bool IsPadKeyJustPressed(int key, int padId) {
 	return IsPadKeyPressed(key, padId) && abs(GetPadLastKeyState(key, padId, true)) == 0;
+}
+
+void SetPadDeadzone(int deadzone) {
+	tNyaPadState::gStickDeadzone = deadzone;
 }
 
 bool bKeyPressed[255];
