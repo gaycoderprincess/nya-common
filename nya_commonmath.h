@@ -129,7 +129,7 @@ public:
 		pw = 1;
 	}
 
-	NyaMat4x4 Invert() const {
+	[[nodiscard]] NyaMat4x4 Invert() const {
 		NyaMat4x4 out;
 		out.x.x = x.x;
 		out.x.y = y.x;
