@@ -228,51 +228,6 @@ public:
 		return out;
 	}
 
-	static NyaMat4x4 RotationMatrixX(float angle) {
-		NyaMat4x4 out;
-		memset(&out, 0, sizeof(NyaMat4x4));
-
-		out.x.x = out.pw = 1.0f;
-		out.y.y = out.z.z = std::cos(angle);
-		out.z.y = out.y.z = std::sin(angle);
-		out.z.y *= -1;
-
-		return out;
-	}
-
-	static NyaMat4x4 RotationMatrixY(float angle) {
-		NyaMat4x4 out;
-		memset(&out, 0, sizeof(NyaMat4x4));
-
-		out.y.y = out.pw = 1.0f;
-		out.x.x = out.z.z = std::cos(angle);
-		out.x.z = out.z.x = std::sin(angle);
-		out.x.z *= -1;
-
-		return out;
-	}
-
-	static NyaMat4x4 RotationMatrixZ(float angle) {
-		NyaMat4x4 out;
-		memset(&out, 0, sizeof(NyaMat4x4));
-
-		out.z.z = out.pw = 1.0f;
-		out.x.x = out.y.y = std::cos(angle);
-		out.y.x = out.x.y = std::sin(angle);
-		out.x.y *= -1;
-
-		return out;
-	}
-
-	static NyaMat4x4 TranslationMatrix(NyaVec3& position) {
-		NyaMat4x4 out;
-		out.SetIdentity();
-
-		out.p = position;
-
-		return out;
-	}
-
 	static NyaMat4x4 ProjectionMatrix(float screenWidth, float screenHeight, float fov, float farClip, float nearClip) {
 		float aspectRatio = screenHeight / screenWidth;
 		float f = 1.f/std::tan(fov * 0.5f);
@@ -286,18 +241,6 @@ public:
 		out.z.z = q;
 		out.zw = 1.0f;
 		out.p.z = -q * nearClip;
-
-		return out;
-	}
-
-	static NyaMat4x4 WorldMatrix(NyaVec3& position, NyaVec3& rotation, NyaVec3& scale) {
-		NyaMat4x4 out = RotationMatrixZ(-rotation.z) * RotationMatrixY(rotation.y) * RotationMatrixX(rotation.x);
-
-		out.p = position;
-
-		out.x *= scale.x;
-		out.y *= scale.y;
-		out.z *= scale.z;
 
 		return out;
 	}
