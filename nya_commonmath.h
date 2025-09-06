@@ -129,22 +129,63 @@ public:
 		pw = 1;
 	}
 
+	// Also translated from GLM
 	[[nodiscard]] NyaMat4x4 Invert() const {
-		NyaMat4x4 out;
-		out.x.x = x.x;
-		out.x.y = y.x;
-		out.x.z = z.x;
-		out.y.x = x.y;
-		out.y.y = y.y;
-		out.y.z = z.y;
-		out.z.x = x.z;
-		out.z.y = y.z;
-		out.z.z = z.z;
-		out.p += out.x * p.x;
-		out.p += out.y * p.y;
-		out.p += out.z * p.z;
-		out.p *= -1;
-		return out;
+		float c0 = z.z * pw - p.z * zw;
+		NyaVec3 f0 = NyaVec3(c0, c0, y.z * pw - p.z * yw);
+		float f0w = y.z * zw - z.z * yw;
+
+		float c1 = z.y * pw - p.y * zw;
+		NyaVec3 f1 = NyaVec3(c1, c1, y.y * pw - p.y * yw);
+		float f1w = y.y * zw - z.y * yw;
+
+		float c2 = z.y * p.z - p.y * z.z;
+		auto f2 = NyaVec3(c2, c2, y.y * p.z - p.y * y.z);
+		auto f2w = y.y * z.z - z.y * y.z;
+
+		float c3 = z.x * pw - p.x * zw;
+		auto f3 = NyaVec3(c3, c3, y.x * pw - p.x * yw);
+		auto f3w = y.x * zw - z.x * yw;
+
+		float c4 = z.x * p.z - p.x * z.z;
+		auto f4 = NyaVec3(c4, c4, y.x * p.z - p.x * y.z);
+		auto f4w = y.x * z.z - z.x * y.z;
+
+		float c5 = z.x * p.y - p.x * z.y;
+		auto f5 = NyaVec3(c5, c5, y.x * p.y - p.x * y.y);
+		auto f5w = y.x * z.y - z.x * y.y;
+
+		NyaMat4x4 vecs;
+		vecs.x = NyaVec3(y.x, x.x, x.x);
+		vecs.y = NyaVec3(y.y, x.y, x.y);
+		vecs.z = NyaVec3(y.z, x.z, x.z);
+		vecs.p = NyaVec3(yw, xw, xw);
+
+		NyaMat4x4 inv;
+		inv.x = vecs.y * f0 - vecs.z * f1 + vecs.p * f2;
+		inv.xw = x.y * f0w - x.z * f1w + xw * f2w;
+
+		inv.y = vecs.x * f0 - vecs.z * f3 + vecs.p * f4;
+		inv.yw = x.x * f0w - x.z * f3w + xw * f4w;
+
+		inv.z = vecs.x * f1 - vecs.y * f3 + vecs.p * f5;
+		inv.zw = x.x * f1w - x.y * f3w + xw * f5w;
+
+		inv.p = vecs.x * f2 - vecs.y * f4 + vecs.z * f5;
+		inv.pw = x.x * f2w - x.y * f4w + x.z * f5w;
+
+		inv.x.y *= -1;
+		inv.xw *= -1;
+		inv.y.x *= -1;
+		inv.y.z *= -1;
+		inv.z.y *= -1;
+		inv.zw *= -1;
+		inv.p.x *= -1;
+		inv.p.z *= -1;
+
+		float det = 1.f / ((x.x * inv.x.x + x.y * inv.y.x) + (x.z * inv.z.x + xw * inv.p.x));
+
+		return inv * det;
 	}
 
 	// Translated from GLM
