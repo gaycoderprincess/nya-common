@@ -129,6 +129,25 @@ public:
 		pw = 1;
 	}
 
+	NyaMat4x4& operator*(const float b) {
+		NyaMat4x4 out;
+		out.x = x * b;
+		out.y = y * b;
+		out.z = z * b;
+		out.p = p * b;
+
+		out.xw = xw * b;
+		out.yw = yw * b;
+		out.zw = zw * b;
+		out.pw = pw * b;
+
+		return out;
+	}
+
+	NyaMat4x4& operator*=(const float b) {
+		return *this = *this * b;
+	}
+
 	// Also translated from GLM
 	[[nodiscard]] NyaMat4x4 Invert() const {
 		float c0 = z.z * pw - p.z * zw;
