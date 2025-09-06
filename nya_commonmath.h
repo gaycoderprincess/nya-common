@@ -147,20 +147,22 @@ public:
 		return out;
 	}
 
+	// Translated from GLM
 	NyaMat4x4 operator*(const NyaMat4x4& a) const {
 		NyaMat4x4 tmp;
-		tmp.x.x = x.x * a.x.x + y.x * a.x.y + z.x * a.x.z;
-		tmp.x.y = x.y * a.x.x + y.y * a.x.y + z.y * a.x.z;
-		tmp.x.z = x.z * a.x.x + y.z * a.x.y + z.z * a.x.z;
-		tmp.y.x = x.x * a.y.x + y.x * a.y.y + z.x * a.y.z;
-		tmp.y.y = x.y * a.y.x + y.y * a.y.y + z.y * a.y.z;
-		tmp.y.z = x.z * a.y.x + y.z * a.y.y + z.z * a.y.z;
-		tmp.z.x = x.x * a.z.x + y.x * a.z.y + z.x * a.z.z;
-		tmp.z.y = x.y * a.z.x + y.y * a.z.y + z.y * a.z.z;
-		tmp.z.z = x.z * a.z.x + y.z * a.z.y + z.z * a.z.z;
-		tmp.p.x = x.x * a.p.x + y.x * a.p.y + z.x * a.p.z + p.x;
-		tmp.p.y = x.y * a.p.x + y.y * a.p.y + z.y * a.p.z + p.y;
-		tmp.p.z = x.z * a.p.x + y.z * a.p.y + z.z * a.p.z + p.z;
+
+		tmp.x = x * a.x.x + y * a.x.y + z * a.x.z + p * a.xw;
+		tmp.xw = xw * a.x.x + yw * a.x.y + zw * a.x.z + pw * a.xw;
+
+		tmp.y = x * a.y.x + y * a.y.y + z * a.y.z + p * a.yw;
+		tmp.yw = xw * a.y.x + yw * a.y.y + zw * a.y.z + pw * a.yw;
+
+		tmp.z = x * a.z.x + y * a.z.y + z * a.z.z + p * a.zw;
+		tmp.zw = xw * a.z.x + yw * a.z.y + zw * a.z.z + pw * a.zw;
+
+		tmp.p = x * a.p.x + y * a.p.y + z * a.p.z + p * a.pw;
+		tmp.pw = xw * a.p.x + yw * a.p.y + zw * a.p.z + pw * a.pw;
+
 		return tmp;
 	}
 
@@ -223,6 +225,80 @@ public:
 		out.y.Normalize();
 		out.z = dir;
 		out.z.Normalize();
+		return out;
+	}
+
+	static NyaMat4x4 RotationMatrixX(float angle) {
+		NyaMat4x4 out;
+		memset(&out, 0, sizeof(NyaMat4x4));
+
+		out.x.x = out.pw = 1.0f;
+		out.y.y = out.z.z = std::cos(angle);
+		out.z.y = out.y.z = std::sin(angle);
+		out.z.y *= -1;
+
+		return out;
+	}
+
+	static NyaMat4x4 RotationMatrixY(float angle) {
+		NyaMat4x4 out;
+		memset(&out, 0, sizeof(NyaMat4x4));
+
+		out.y.y = out.pw = 1.0f;
+		out.x.x = out.z.z = std::cos(angle);
+		out.x.z = out.z.x = std::sin(angle);
+		out.x.z *= -1;
+
+		return out;
+	}
+
+	static NyaMat4x4 RotationMatrixZ(float angle) {
+		NyaMat4x4 out;
+		memset(&out, 0, sizeof(NyaMat4x4));
+
+		out.z.z = out.pw = 1.0f;
+		out.x.x = out.y.y = std::cos(angle);
+		out.y.x = out.x.y = std::sin(angle);
+		out.x.y *= -1;
+
+		return out;
+	}
+
+	static NyaMat4x4 TranslationMatrix(NyaVec3& position) {
+		NyaMat4x4 out;
+		out.SetIdentity();
+
+		out.p = position;
+
+		return out;
+	}
+
+	static NyaMat4x4 ProjectionMatrix(float screenWidth, float screenHeight, float fov, float farClip, float nearClip) {
+		float aspectRatio = screenHeight / screenWidth;
+		float f = 1.f/std::tan(fov * 0.5f);
+		float q = farClip / (farClip - nearClip);
+
+		NyaMat4x4 out;
+		memset(&out, 0, sizeof(NyaMat4x4));
+
+		out.x.x = aspectRatio * f;
+		out.y.y = f;
+		out.z.z = q;
+		out.zw = 1.0f;
+		out.p.z = -q * nearClip;
+
+		return out;
+	}
+
+	static NyaMat4x4 WorldMatrix(NyaVec3& position, NyaVec3& rotation, NyaVec3& scale) {
+		NyaMat4x4 out = RotationMatrixZ(-rotation.z) * RotationMatrixY(rotation.y) * RotationMatrixX(rotation.x);
+
+		out.p = position;
+
+		out.x *= scale.x;
+		out.y *= scale.y;
+		out.z *= scale.z;
+
 		return out;
 	}
 };
