@@ -129,7 +129,7 @@ public:
 		pw = 1;
 	}
 
-	NyaMat4x4& operator*(const float b) {
+	NyaMat4x4 operator*(const float b) {
 		NyaMat4x4 out;
 		out.x = x * b;
 		out.y = y * b;
