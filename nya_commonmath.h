@@ -85,6 +85,36 @@ public:
 	[[nodiscard]] inline double length() const { return Length(); } // required naming for spline library
 };
 
+class NyaVec4
+{
+public:
+	float x, y, z, w;
+
+	NyaVec4(float x, float y, float z, float w)
+	{
+		this->x = x;
+		this->y = y;
+		this->z = z;
+		this->w = w;
+	}
+
+	explicit NyaVec4(float x)
+	{
+		this->x = x;
+		this->y = x;
+		this->z = x;
+		this->w = x;
+	}
+
+	NyaVec4(NyaVec3Custom<float>& v, float w)
+	{
+		this->x = v.x;
+		this->y = v.y;
+		this->z = v.z;
+		this->w = w;
+	}
+};
+
 #ifndef NYA_MATH_NO_TEMPLATES
 typedef NyaVec3Custom<float> NyaVec3;
 typedef NyaVec3Custom<double> NyaVec3Double;
@@ -305,6 +335,16 @@ public:
 		return out;
 	}
 };
+
+inline NyaVec4 operator*(const NyaMat4x4& a, const NyaVec4& b)
+{
+	auto out = NyaVec4(0);
+	out.x = a.x.x * b.x + a.y.x * b.y + a.z.x * b.z + a.p.x * b.w;
+	out.y = a.x.y * b.x + a.y.y * b.y + a.z.y * b.z + a.p.y * b.w;
+	out.z = a.x.z * b.x + a.y.z * b.y + a.z.z * b.z + a.p.z * b.w;
+	out.w = a.xw * b.x + a.yw * b.y + a.zw * b.z + a.pw * b.w;
+	return out;
+}
 
 NyaVec3 operator*(const NyaMat4x4& a, const NyaVec3& b) {
 	NyaVec3 out;
