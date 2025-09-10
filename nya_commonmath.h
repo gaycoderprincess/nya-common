@@ -159,6 +159,24 @@ public:
 		pw = 1;
 	}
 
+	[[nodiscard]] NyaMat4x4 FastInvert() const {
+		NyaMat4x4 out;
+		out.x.x = x.x;
+		out.x.y = y.x;
+		out.x.z = z.x;
+		out.y.x = x.y;
+		out.y.y = y.y;
+		out.y.z = z.y;
+		out.z.x = x.z;
+		out.z.y = y.z;
+		out.z.z = z.z;
+		out.p += out.x * p.x;
+		out.p += out.y * p.y;
+		out.p += out.z * p.z;
+		out.p *= -1;
+		return out;
+	}
+
 	NyaMat4x4 operator*(const float b) {
 		NyaMat4x4 out;
 		out.x = x * b;
