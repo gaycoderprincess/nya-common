@@ -85,12 +85,17 @@ public:
 	[[nodiscard]] inline double length() const { return Length(); } // required naming for spline library
 };
 
-class NyaVec4
-{
+#ifdef NYA_MATH_NO_TEMPLATES
+class NyaVec4Custom {
 public:
 	float x, y, z, w;
 
-	NyaVec4(float x, float y, float z, float w)
+	float operator[] (int i) const { return (&x)[i]; }
+	float& operator[] (int i) { return (&x)[i]; }
+
+	operator NyaVec3Custom() const { return { x, y, z }; }
+
+	NyaVec4Custom(float x, float y, float z, float w)
 	{
 		this->x = x;
 		this->y = y;
@@ -98,7 +103,7 @@ public:
 		this->w = w;
 	}
 
-	explicit NyaVec4(float x)
+	explicit NyaVec4Custom(float x)
 	{
 		this->x = x;
 		this->y = x;
@@ -106,18 +111,142 @@ public:
 		this->w = x;
 	}
 
-	NyaVec4(NyaVec3Custom<float>& v, float w)
+	NyaVec4Custom(NyaVec3Custom& v, float w)
 	{
 		this->x = v.x;
 		this->y = v.y;
 		this->z = v.z;
 		this->w = w;
 	}
+
+	NyaVec4Custom& operator*=(const float a)
+	{
+		x *= a;
+		y *= a;
+		z *= a;
+		w *= a;
+		return *this;
+	}
+
+	NyaVec4Custom& operator/=(const float a)
+	{
+		x /= a;
+		y /= a;
+		z /= a;
+		w /= a;
+		return *this;
+	}
+
+#else
+template<typename T>
+class NyaVec4Custom {
+public:
+	T x, y, z, w;
+
+	T operator[] (int i) const { return (&x)[i]; }
+	T& operator[] (int i) { return (&x)[i]; }
+
+	operator NyaVec3Custom<T>() const { return { x, y, z }; }
+
+	NyaVec4Custom(T x, T y, T z, T w)
+	{
+		this->x = x;
+		this->y = y;
+		this->z = z;
+		this->w = w;
+	}
+
+	explicit NyaVec4Custom(T x)
+	{
+		this->x = x;
+		this->y = x;
+		this->z = x;
+		this->w = x;
+	}
+
+	NyaVec4Custom(NyaVec3Custom<T>& v, T w)
+	{
+		this->x = v.x;
+		this->y = v.y;
+		this->z = v.z;
+		this->w = w;
+	}
+
+	NyaVec4Custom operator*(const T a) { return { x * a, y * a, z * a, w * a }; }
+	NyaVec4Custom operator/(const T a) { return { x / a, y / a, z / a, w / a }; }
+
+	NyaVec4Custom& operator*=(const T a)
+	{
+		x *= a;
+		y *= a;
+		z *= a;
+		w *= a;
+		return *this;
+	}
+
+	NyaVec4Custom& operator/=(const T a)
+	{
+		x /= a;
+		y /= a;
+		z /= a;
+		w /= a;
+		return *this;
+	}
+
+#endif
+
+	float Dot(const NyaVec4Custom& a) { return {x * a.x + y * a.y + z * a.z, w * a.w }; }
+	float Length() const { return std::sqrt(x * x + y * y + z * z); }
+
+	NyaVec4Custom operator+(const NyaVec4Custom& a) { return { x + a.x, y + a.y, z + a.z, w + a.w }; }
+	NyaVec4Custom operator-(const NyaVec4Custom& a) { return { x - a.x, y - a.y, z - a.z, w - a.w }; }
+	NyaVec4Custom operator*(const NyaVec4Custom& a) { return { x * a.x, y * a.y, z * a.z, w * a.w }; }
+	NyaVec4Custom operator/(const NyaVec4Custom& a) { return { x / a.x, y / a.y, z / a.z, w / a.w }; }
+
+	NyaVec4Custom& operator+=(const NyaVec4Custom& a)
+	{
+		x += a.x;
+		y += a.y;
+		z += a.z;
+		w += a.w;
+		return *this;
+	}
+
+	NyaVec4Custom& operator-=(const NyaVec4Custom& a)
+	{
+		x -= a.x;
+		y -= a.y;
+		z -= a.z;
+		w -= a.w;
+		return *this;
+	}
+
+	NyaVec4Custom& operator*=(const NyaVec4Custom& a)
+	{
+		x *= a.x;
+		y *= a.y;
+		z *= a.z;
+		w *= a.w;
+		return *this;
+	}
+
+	NyaVec4Custom& operator/=(const NyaVec4Custom& a)
+	{
+		x /= a.x;
+		y /= a.y;
+		z /= a.z;
+		w /= a.w;
+		return *this;
+	}
+
+	[[nodiscard]] inline double length() const { return Length(); };
 };
 
 #ifndef NYA_MATH_NO_TEMPLATES
 typedef NyaVec3Custom<float> NyaVec3;
 typedef NyaVec3Custom<double> NyaVec3Double;
+typedef NyaVec4Custom<float> NyaVec4;
+typedef NyaVec4Custom<double> NyaVec4Double;
 #endif
 
 NyaVec3 operator*(const float a, const NyaVec3& b) {
@@ -125,6 +254,13 @@ NyaVec3 operator*(const float a, const NyaVec3& b) {
 }
 NyaVec3 operator/(const float a, const NyaVec3& b) {
 	return { a / b.x, a / b.y, a / b.z };
+}
+
+NyaVec4 operator*(const float a, const NyaVec4& b) {
+	return { a * b.x, a * b.y, a * b.z, a * b.w };
+}
+NyaVec4 operator/(const float a, const NyaVec4& b) {
+	return { a / b.x, a / b.y, a / b.z, a / b.w };
 }
 
 class NyaMat4x4 {
