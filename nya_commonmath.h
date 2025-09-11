@@ -195,8 +195,8 @@ public:
 
 #endif
 
-	float Dot(const NyaVec4Custom& a) { return {x * a.x + y * a.y + z * a.z, w * a.w }; }
-	float Length() const { return std::sqrt(x * x + y * y + z * z); }
+	double Dot(const NyaVec4Custom& a) { return x * a.x + y * a.y + z * a.z + w * a.w; }
+	double Length() const { return std::sqrt(x * x + y * y + z * z); }
 
 	NyaVec4Custom operator+(const NyaVec4Custom& a) { return { x + a.x, y + a.y, z + a.z, w + a.w }; }
 	NyaVec4Custom operator-(const NyaVec4Custom& a) { return { x - a.x, y - a.y, z - a.z, w - a.w }; }
