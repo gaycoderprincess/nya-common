@@ -188,7 +188,8 @@ namespace NyaDrawing {
 
 	void CNyaCallback::Draw() const {
 		if (!callback) return;
-		ImGui::GetForegroundDrawList()->AddCallback(callback, nullptr);
+		if (runImmediately) callback(nullptr, nullptr);
+		else ImGui::GetForegroundDrawList()->AddCallback(callback, nullptr);
 	}
 	CNyaRectangle aRectangles[nMaxDrawablesPerType];
 	CNyaTriangle aTriangles[nMaxDrawablesPerType];
@@ -252,7 +253,7 @@ namespace NyaDrawing {
 			drawable->Draw();
 		}
 
-		NyaDrawing::aDrawList.clear();
+		aDrawList.clear();
 		nNextRectangle = 0;
 		nNextTriangle = 0;
 		nNextText = 0;
@@ -337,12 +338,13 @@ void DrawString(const tNyaStringData& data, const std::string& string, void(*dra
 	NyaDrawing::aDrawList.push_back(&tmp);
 }
 
-void DrawCallback(ImDrawCallback data) {
+void DrawCallback(ImDrawCallback data, bool runImmediately) {
 	if (!data) return;
 	if (NyaDrawing::nNextCallback >= NyaDrawing::nMaxDrawablesPerType) return;
 
 	auto& tmp = NyaDrawing::aCallbacks[NyaDrawing::nNextCallback++];
 	tmp.callback = data;
+	tmp.runImmediately = runImmediately;
 	NyaDrawing::aDrawList.push_back(&tmp);
 }
 
