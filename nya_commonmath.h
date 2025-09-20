@@ -5,6 +5,7 @@
 
 #ifdef NYA_MATH_NO_TEMPLATES
 #define NyaVec3Custom NyaVec3
+#define NyaVec4Custom NyaVec4
 
 class NyaVec3Custom {
 public:
@@ -136,7 +137,6 @@ public:
 		w /= a;
 		return *this;
 	}
-
 #else
 template<typename T>
 class NyaVec4Custom {
@@ -192,7 +192,6 @@ public:
 		w /= a;
 		return *this;
 	}
-
 #endif
 
 	double Dot(const NyaVec4Custom& a) { return x * a.x + y * a.y + z * a.z + w * a.w; }
