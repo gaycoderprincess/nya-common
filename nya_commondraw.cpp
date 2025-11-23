@@ -101,6 +101,23 @@ namespace NyaDrawing {
 		else drawList->AddRectFilled(v1, v2, rgb, rounding * nResY, 0);
 	}
 
+	void CNyaArc::Draw() const {
+		if (!a) return;
+
+		CNyaRGBA32 rgb;
+		rgb.r = r;
+		rgb.g = g;
+		rgb.b = b;
+		rgb.a = a;
+		ImVec2 v;
+		v.x = x * nResX;
+		v.y = y * nResY;
+
+		auto drawList = ImGui::GetForegroundDrawList();
+		ImGui::GetForegroundDrawList()->PathArcTo(v, radius * nResY, min, max, 16);
+		ImGui::GetForegroundDrawList()->PathStroke(*(uint32_t*)&rgb, 0, thickness * nResY);
+	}
+
 	void CNyaTriangle::Draw() const {
 		if (!a) return;
 
@@ -192,10 +209,12 @@ namespace NyaDrawing {
 		else ImGui::GetForegroundDrawList()->AddCallback(callback, nullptr);
 	}
 	CNyaRectangle aRectangles[nMaxDrawablesPerType];
+	CNyaArc aArcs[nMaxDrawablesPerType];
 	CNyaTriangle aTriangles[nMaxDrawablesPerType];
 	CNyaText aText[nMaxDrawablesPerType];
 	CNyaCallback aCallbacks[nMaxDrawablesPerType];
 	int nNextRectangle = 0;
+	int nNextArc = 0;
 	int nNextTriangle = 0;
 	int nNextText = 0;
 	int nNextCallback = 0;
@@ -255,6 +274,7 @@ namespace NyaDrawing {
 
 		aDrawList.clear();
 		nNextRectangle = 0;
+		nNextArc = 0;
 		nNextTriangle = 0;
 		nNextText = 0;
 		nNextCallback = 0;
@@ -302,6 +322,23 @@ bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing:
 	auto mouseY = GetMousePosY();
 	if (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom) return true;
 	return false;
+}
+
+void DrawArc(float x, float y, float radius, float thickness, float start, float end, NyaDrawing::CNyaRGBA32 rgb) {
+	if (NyaDrawing::nNextArc >= NyaDrawing::nMaxDrawablesPerType) return;
+
+	auto& tmp = NyaDrawing::aArcs[NyaDrawing::nNextArc++];
+	tmp.x = x;
+	tmp.y = y;
+	tmp.radius = radius;
+	tmp.thickness = thickness;
+	tmp.r = rgb.r;
+	tmp.g = rgb.g;
+	tmp.b = rgb.b;
+	tmp.a = rgb.a;
+	tmp.min = start;
+	tmp.max = end;
+	NyaDrawing::aDrawList.push_back(&tmp);
 }
 
 void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb, float clipMinX, float clipMinY, float clipMaxX, float clipMaxY) {
