@@ -114,8 +114,8 @@ namespace NyaDrawing {
 		v.y = y * nResY;
 
 		auto drawList = ImGui::GetForegroundDrawList();
-		ImGui::GetForegroundDrawList()->PathArcTo(v, radius * nResY, min, max, 16);
-		ImGui::GetForegroundDrawList()->PathStroke(*(uint32_t*)&rgb, 0, thickness * nResY);
+		drawList->PathArcTo(v, radius * nResY, min, max, 32);
+		drawList->PathStroke(*(uint32_t*)&rgb, 0, thickness * nResY);
 	}
 
 	void CNyaTriangle::Draw() const {
