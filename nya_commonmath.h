@@ -148,6 +148,8 @@ public:
 
 	operator NyaVec3Custom<T>() const { return { x, y, z }; }
 
+	NyaVec4Custom() { x = y = z = w = 0; }
+	
 	NyaVec4Custom(T x, T y, T z, T w)
 	{
 		this->x = x;
