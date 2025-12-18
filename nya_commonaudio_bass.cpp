@@ -13,15 +13,15 @@ namespace NyaAudio {
 		return true;
 	}
 
-	NyaSound LoadFile(const char* path) {
-		if (auto sound = BASS_StreamCreateFile(false, path, 0, 0, BASS_STREAM_PRESCAN)) {
+	NyaSound LoadFile(const std::string& path) {
+		if (auto sound = BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN)) {
 			return sound;
 		}
 		return 0;
 	}
 
-	NyaSound LoadFileStreamed(const char* path) {
-		if (auto sound = BASS_StreamCreateFile(false, path, 0, 0, BASS_ASYNCFILE)) {
+	NyaSound LoadFileStreamed(const std::string& path) {
+		if (auto sound = BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_ASYNCFILE)) {
 			return sound;
 		}
 		return 0;

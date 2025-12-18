@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <string>
 
 #include "bass.h"
 
@@ -6,8 +7,8 @@ namespace NyaAudio {
 	typedef HSTREAM NyaSound;
 
 	bool Init(HWND hwnd);
-	NyaSound LoadFile(const char* path);
-	NyaSound LoadFileStreamed(const char* path);
+	NyaSound LoadFile(const std::string& path);
+	NyaSound LoadFileStreamed(const std::string& path);
 	NyaSound LoadMemory(const char* data, size_t size);
 	void Delete(NyaSound* sound);
 	void Play(NyaSound sound);
