@@ -21,7 +21,7 @@ void HookBaseLoop() {
 	HookLoop();
 
 	nMouseWheelState = 0;
-	sKeyboardInput = "";
+	sKeyboardInput.clear();
 }
 
 void WndProcHook(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
