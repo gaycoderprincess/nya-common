@@ -114,6 +114,55 @@ namespace NyaHookLib {
 	uintptr_t GetEntryPoint() {
 		return GetEntryPoint((HMODULE)mEXEBase);
 	}
+
+	class PatchWithUndo {
+	public:
+		uintptr_t nLocation;
+		uint8_t* pOldBytes;
+		uint8_t* pNewBytes;
+		size_t nNumBytes;
+
+		PatchWithUndo(std::vector<PatchWithUndo*>* out, uintptr_t location, size_t numBytes, void(*pFunction)()) : nLocation(location), nNumBytes(numBytes) {
+			pOldBytes = new uint8_t[nNumBytes];
+			memcpy(pOldBytes, (void*)nLocation, nNumBytes);
+
+			pFunction();
+
+			pNewBytes = new uint8_t[nNumBytes];
+			memcpy(pNewBytes, (void*)nLocation, nNumBytes);
+
+			UndoPatch();
+
+			out->push_back(this);
+		}
+
+		template<typename T>
+		PatchWithUndo(std::vector<PatchWithUndo*>* out, NyaHookLib::eOffsetInstruction type, uintptr_t location, T dest) : nLocation(location), nNumBytes(5) {
+			pOldBytes = new uint8_t[nNumBytes];
+			memcpy(pOldBytes, (void*)nLocation, nNumBytes);
+
+			NyaHookLib::PatchRelative(type, location, dest);
+
+			pNewBytes = new uint8_t[nNumBytes];
+			memcpy(pNewBytes, (void*)nLocation, nNumBytes);
+
+			UndoPatch();
+
+			out->push_back(this);
+		}
+
+		void ApplyPatch() const {
+			for (int i = 0; i < nNumBytes; i++) {
+				NyaHookLib::Patch<uint8_t>(nLocation + i, pNewBytes[i]);
+			}
+		}
+
+		void UndoPatch() const {
+			for (int i = 0; i < nNumBytes; i++) {
+				NyaHookLib::Patch<uint8_t>(nLocation + i, pOldBytes[i]);
+			}
+		}
+	};
 }
 
 #endif
