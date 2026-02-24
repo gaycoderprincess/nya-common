@@ -2,6 +2,7 @@
 #define NYA_COMMON_HOOKING
 #include <cstdint>
 #include <psapi.h>
+#include <vector>
 
 namespace NyaHookLib {
 	template<typename T>
