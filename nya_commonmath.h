@@ -237,7 +237,7 @@ public:
 // needed to be able to swap places explicitly in multiplications/divisons
 
 template<typename T>
-inline NyaVec3Custom<T> operator*(float a, const NyaVec3Custom<T>& b) {
+inline NyaVec3Custom<T> operator*(const float a, const NyaVec3Custom<T>& b) {
 	return b * a;
 }
 
@@ -247,7 +247,7 @@ inline NyaVec3Custom<T> operator/(const float a, const NyaVec3Custom<T>& b) {
 }
 
 template<typename T>
-inline NyaVec4Custom<T> operator*(float a, const NyaVec4Custom<T>& b) {
+inline NyaVec4Custom<T> operator*(const float a, const NyaVec4Custom<T>& b) {
 	return b * a;
 }
 
