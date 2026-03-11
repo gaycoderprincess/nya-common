@@ -261,6 +261,23 @@ using NyaVec3Double = NyaVec3Custom<double>;
 using NyaVec4 = NyaVec4Custom<float>;
 using NyaVec4Double = NyaVec4Custom<double>;
 #else
+
+inline NyaVec3Custom operator*(const float a, const NyaVec3Custom& b) {
+	return b * a;
+}
+
+inline NyaVec3Custom operator/(const float a, const NyaVec3Custom& b) {
+	return { a / b.x, a / b.y, a / b.z };
+}
+
+inline NyaVec4Custom operator*(const float a, const NyaVec4Custom& b) {
+	return b * a;
+}
+
+inline NyaVec4Custom operator/(const float a, const NyaVec4Custom& b) {
+	return { a / b.x, a / b.y, a / b.z, a / b.w };
+}    
+
 using NyaVec3 = NyaVec3Custom;
 using NyaVec3Double = NyaVec3Custom;
 using NyaVec4 = NyaVec4Custom;
