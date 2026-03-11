@@ -1,12 +1,15 @@
 #ifndef NYA_MATH_H
 #define NYA_MATH_H
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 
-#ifdef NYA_MATH_NO_TEMPLATES
-#define NyaVec3Custom NyaVec3
-#define NyaVec4Custom NyaVec4
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning(disable: 4244) // conversion from 'const double' to 'T', possible loss of data
+#endif
 
+#ifdef NYA_MATH_NO_TEMPLATES
 class NyaVec3Custom {
 public:
 	float x = 0;
@@ -17,11 +20,18 @@ public:
 	float& operator[] (int i) { return (&x)[i]; }
 #else
 template<typename T>
+class NyaVec4Custom;
+
+template<typename T>
 class NyaVec3Custom {
 public:
 	T x = 0;
 	T y = 0;
 	T z = 0;
+
+	NyaVec3Custom() : x(0), y(0), z(0) {}
+	NyaVec3Custom(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
+	NyaVec3Custom(const NyaVec4Custom<T>& other) : x(other.x), y(other.y), z(other.z) {}
 
 	T operator[] (int i) const { return (&x)[i]; }
 	T& operator[] (int i) { return (&x)[i]; }
@@ -85,7 +95,6 @@ public:
 
 	[[nodiscard]] inline double length() const { return Length(); } // required naming for spline library
 };
-
 #ifdef NYA_MATH_NO_TEMPLATES
 class NyaVec4Custom {
 public:
@@ -148,31 +157,11 @@ public:
 
 	operator NyaVec3Custom<T>() const { return { x, y, z }; }
 
-	NyaVec4Custom() { x = y = z = w = 0; }
-	
-	NyaVec4Custom(T x, T y, T z, T w)
-	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
-		this->w = w;
-	}
-
-	explicit NyaVec4Custom(T x)
-	{
-		this->x = x;
-		this->y = x;
-		this->z = x;
-		this->w = x;
-	}
-
-	NyaVec4Custom(NyaVec3Custom<T>& v, T w)
-	{
-		this->x = v.x;
-		this->y = v.y;
-		this->z = v.z;
-		this->w = w;
-	}
+	NyaVec4Custom() : x(0), y(0), z(0) {}
+	NyaVec4Custom(T _x) : x(_x), y(_x), z(_x), w(_x) {}
+	NyaVec4Custom(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) {}
+	NyaVec4Custom(const NyaVec3Custom<T>& other) : x(other.x), y(other.y), z(other.z), w(0) {}
+	NyaVec4Custom(const NyaVec3Custom<T>& other, T _w) : x(other.x), y(other.y), z(other.z), w(_w) {}
 
 	NyaVec4Custom operator*(const T a) { return { x * a, y * a, z * a, w * a }; }
 	NyaVec4Custom operator/(const T a) { return { x / a, y / a, z / a, w / a }; }
@@ -244,25 +233,31 @@ public:
 };
 
 #ifndef NYA_MATH_NO_TEMPLATES
-typedef NyaVec3Custom<float> NyaVec3;
-typedef NyaVec3Custom<double> NyaVec3Double;
-typedef NyaVec4Custom<float> NyaVec4;
-typedef NyaVec4Custom<double> NyaVec4Double;
+
+// needed to be able to swap places explicitly in multiplications
+
+template<typename T>
+inline NyaVec3Custom<T> operator*(float a, const NyaVec3Custom<T>& v)
+{
+	return v * a;
+}
+
+template<typename T>
+inline NyaVec4Custom<T> operator*(float a, const NyaVec4Custom<T>& v)
+{
+	return v * a;
+}
+
+using NyaVec3 = NyaVec3Custom<float>;
+using NyaVec3Double = NyaVec3Custom<double>;
+using NyaVec4 = NyaVec4Custom<float>;
+using NyaVec4Double = NyaVec4Custom<double>;
+#else
+using NyaVec3 = NyaVec3Custom;
+using NyaVec3Double = NyaVec3Custom;
+using NyaVec4 = NyaVec4Custom;
+using NyaVec4Double = NyaVec4Custom;
 #endif
-
-NyaVec3 operator*(const float a, const NyaVec3& b) {
-	return { a * b.x, a * b.y, a * b.z };
-}
-NyaVec3 operator/(const float a, const NyaVec3& b) {
-	return { a / b.x, a / b.y, a / b.z };
-}
-
-NyaVec4 operator*(const float a, const NyaVec4& b) {
-	return { a * b.x, a * b.y, a * b.z, a * b.w };
-}
-NyaVec4 operator/(const float a, const NyaVec4& b) {
-	return { a / b.x, a / b.y, a / b.z, a / b.w };
-}
 
 class NyaMat4x4 {
 public:
@@ -276,14 +271,16 @@ public:
 	float pw;
 
 #ifdef NYA_MATH_Z_UP
-	static inline bool bZUp = true;
+	static inline const bool bZUp = true;
 #else
-	static inline bool bZUp = false;
+	static inline const bool bZUp = false;
 #endif
 
-	NyaMat4x4() {
-		SetIdentity();
-	}
+	NyaMat4x4() { SetIdentity(); }
+	//NyaMat4x4(const NyaMat4x4& other) : x(other.x), xw(other.xw), y(other.y), yw(other.yw), z(other.z), zw(other.zw), p(other.p), pw(other.pw) {}
+	NyaMat4x4(NyaVec3 _x, NyaVec3 _y, NyaVec3 _z, NyaVec3 _p) : x(_x), y(_y), z(_z), p(_p) { pw = 1; }
+	NyaMat4x4(NyaVec4 _x, NyaVec4 _y, NyaVec4 _z, NyaVec4 _p) : x(_x), xw(_x.w), y(_y), yw(_y.w), z(_z), zw(_z.w), p(_p), pw(_p.w) {}
+	NyaMat4x4(NyaVec3 _x, float _xw, NyaVec3 _y, float _yw, NyaVec3 _z, float _zw, NyaVec3 _p, float _pw) : x(_x), xw(_xw), y(_y), yw(_yw), z(_z), zw(_zw), p(_p), pw(_pw) {}
 
 	float operator[] (int i) const { return (&x.x)[i]; }
 	float& operator[] (int i) { return (&x.x)[i]; }
@@ -491,8 +488,15 @@ public:
 	}
 };
 
-inline NyaVec4 operator*(const NyaMat4x4& a, const NyaVec4& b)
-{
+inline NyaVec3 operator*(const NyaMat4x4& a, const NyaVec3& b) {
+	NyaVec3 out;
+	out.x = a.x.x * b.x + a.y.x * b.y + a.z.x * b.z + a.p.x;
+	out.y = a.x.y * b.x + a.y.y * b.y + a.z.y * b.z + a.p.y;
+	out.z = a.x.z * b.x + a.y.z * b.y + a.z.z * b.z + a.p.z;
+	return out;
+}
+
+inline NyaVec4 operator*(const NyaMat4x4& a, const NyaVec4& b) {
 	auto out = NyaVec4(0);
 	out.x = a.x.x * b.x + a.y.x * b.y + a.z.x * b.z + a.p.x * b.w;
 	out.y = a.x.y * b.x + a.y.y * b.y + a.z.y * b.z + a.p.y * b.w;
@@ -501,11 +505,8 @@ inline NyaVec4 operator*(const NyaMat4x4& a, const NyaVec4& b)
 	return out;
 }
 
-NyaVec3 operator*(const NyaMat4x4& a, const NyaVec3& b) {
-	NyaVec3 out;
-	out.x = a.x.x * b.x + a.y.x * b.y + a.z.x * b.z + a.p.x;
-	out.y = a.x.y * b.x + a.y.y * b.y + a.z.y * b.z + a.p.y;
-	out.z = a.x.z * b.x + a.y.z * b.y + a.z.z * b.z + a.p.z;
-	return out;
-}
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+
 #endif
