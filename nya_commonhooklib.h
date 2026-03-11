@@ -116,6 +116,67 @@ namespace NyaHookLib {
 		return GetEntryPoint((HMODULE)mEXEBase);
 	}
 
+	namespace SigScanner {
+		enum { ANY = 0x1FF, };
+
+		struct Section {
+			uintptr_t startAddress;
+			uintptr_t endAddress;
+		};
+		std::vector<Section> aPESections;
+		void ScanPE() {
+			auto module = (uintptr_t)GetModuleHandleA(nullptr);
+			auto dosHeader = (PIMAGE_DOS_HEADER)module;
+			auto ntHeader = (PIMAGE_NT_HEADERS)(module + dosHeader->e_lfanew);
+			auto sectionHeader = (PIMAGE_SECTION_HEADER)((uintptr_t)&ntHeader->OptionalHeader + ntHeader->FileHeader.SizeOfOptionalHeader);
+
+			for (int i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
+				auto sectionData = &sectionHeader[i];
+				auto base = module + sectionData->VirtualAddress;
+				aPESections.push_back({base, base + sectionData->SizeOfRawData});
+			}
+		}
+
+		uintptr_t FindSignature(const std::vector<uint16_t>& bytes, uintptr_t startAddress, uintptr_t endAddress) {
+			if (bytes.empty()) return 0;
+
+			for (uintptr_t i = startAddress; i < endAddress; i++) {
+				auto at = (uint8_t*)i;
+				bool fail = false;
+				for (int j = 0; j < bytes.size(); j++) {
+					if ((uintptr_t)&at[j] >= endAddress) return 0;
+
+					if (bytes[j] > 0xFF) continue; // wildcard check
+					if (at[j] != bytes[j]) {
+						fail = true;
+						break;
+					}
+				}
+
+				if (!fail) {
+					return i;
+				}
+			}
+			return 0;
+		}
+
+		// the bytes array is actually int8, any values above 0xFF are discarded as wildcards!
+		uintptr_t FindSignature(const std::vector<uint16_t>& bytes) {
+			if (bytes.empty()) return 0;
+
+			if (aPESections.empty()) {
+				ScanPE();
+			}
+
+			for (auto& section : aPESections) {
+				if (auto addr = FindSignature(bytes, section.startAddress, section.endAddress)) {
+					return addr;
+				}
+			}
+			return 0;
+		}
+	};
+
 	class PatchWithUndo {
 	public:
 		uintptr_t nLocation;
