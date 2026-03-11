@@ -296,9 +296,9 @@ public:
 	float pw;
 
 #ifdef NYA_MATH_Z_UP
-	static inline const bool bZUp = true;
+	static inline bool bZUp = true;
 #else
-	static inline const bool bZUp = false;
+	static inline bool bZUp = false;
 #endif
 
 	NyaMat4x4() { SetIdentity(); }
