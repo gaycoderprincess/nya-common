@@ -6,14 +6,14 @@
 
 namespace NyaHookLib {
 	template<typename T>
-	void Patch(uintptr_t address, T value) {
+	inline void Patch(uintptr_t address, T value) {
 		DWORD backup, backup2;
 		VirtualProtect((void*)address, sizeof(value), PAGE_EXECUTE_READWRITE, &backup);
 		memcpy((void*)address, (void*)&value, sizeof(value));
 		VirtualProtect((void*)address, sizeof(value), backup, &backup2);
 	}
 
-	void WriteString(uintptr_t address, const char* string, bool includeTerminator = true) {
+	inline void WriteString(uintptr_t address, const char* string, bool includeTerminator = true) {
 		size_t size = strlen(string) + includeTerminator;
 
 		DWORD backup, backup2;
@@ -22,7 +22,7 @@ namespace NyaHookLib {
 		VirtualProtect((void*)address, size, backup, &backup2);
 	}
 
-	void Fill(uintptr_t address, uint8_t value, unsigned int count) {
+	inline void Fill(uintptr_t address, uint8_t value, unsigned int count) {
 		DWORD backup, backup2;
 		VirtualProtect((void*)address, count, PAGE_EXECUTE_READWRITE, &backup);
 		memset((void*)address, value, count);
@@ -88,7 +88,7 @@ namespace NyaHookLib {
 #endif
 
 	template<typename T>
-	uintptr_t PatchRelative(eOffsetInstruction type, uintptr_t src, T dest) {
+	inline uintptr_t PatchRelative(eOffsetInstruction type, uintptr_t src, T dest) {
 		if (type == RAW) src -= 1;
 		else Patch<uint8_t>(src, type == CALL ? 0xE8 : 0xE9);
 		auto old = ReadRelative(src + 1);
@@ -104,15 +104,15 @@ namespace NyaHookLib {
 		return old;
 	}
 
-	auto mEXEBase = (uintptr_t)GetModuleHandleA(nullptr);
+	inline auto mEXEBase = (uintptr_t)GetModuleHandleA(nullptr);
 
-	uintptr_t GetEntryPoint(HMODULE module) {
+	inline uintptr_t GetEntryPoint(HMODULE module) {
 		MODULEINFO info;
 		GetModuleInformation(GetCurrentProcess(), module, &info, sizeof(info));
 		return (uintptr_t)info.EntryPoint - (uintptr_t)info.lpBaseOfDll;
 	}
 
-	uintptr_t GetEntryPoint() {
+	inline uintptr_t GetEntryPoint() {
 		return GetEntryPoint((HMODULE)mEXEBase);
 	}
 
