@@ -10,6 +10,8 @@
 #endif
 
 #ifdef NYA_MATH_NO_TEMPLATES
+class NyaVec4Custom;
+
 class NyaVec3Custom {
 public:
 	float x = 0;
@@ -20,6 +22,7 @@ public:
 	float& operator[] (int i) { return (&x)[i]; }
 #else
 template<typename T>
+
 class NyaVec4Custom;
 
 template<typename T>
