@@ -302,7 +302,6 @@ public:
 #endif
 
 	NyaMat4x4() { SetIdentity(); }
-	//NyaMat4x4(const NyaMat4x4& other) : x(other.x), xw(other.xw), y(other.y), yw(other.yw), z(other.z), zw(other.zw), p(other.p), pw(other.pw) {}
 	NyaMat4x4(NyaVec3 _x, NyaVec3 _y, NyaVec3 _z, NyaVec3 _p) : x(_x), y(_y), z(_z), p(_p) { pw = 1; }
 	NyaMat4x4(NyaVec4 _x, NyaVec4 _y, NyaVec4 _z, NyaVec4 _p) : x(_x), xw(_x.w), y(_y), yw(_y.w), z(_z), zw(_z.w), p(_p), pw(_p.w) {}
 	NyaMat4x4(NyaVec3 _x, float _xw, NyaVec3 _y, float _yw, NyaVec3 _z, float _zw, NyaVec3 _p, float _pw) : x(_x), xw(_xw), y(_y), yw(_yw), z(_z), zw(_zw), p(_p), pw(_pw) {}
