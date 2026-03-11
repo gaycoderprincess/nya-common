@@ -234,18 +234,26 @@ public:
 
 #ifndef NYA_MATH_NO_TEMPLATES
 
-// needed to be able to swap places explicitly in multiplications
+// needed to be able to swap places explicitly in multiplications/divisons
 
 template<typename T>
-inline NyaVec3Custom<T> operator*(float a, const NyaVec3Custom<T>& v)
-{
-	return v * a;
+inline NyaVec3Custom<T> operator*(float a, const NyaVec3Custom<T>& b) {
+	return b * a;
 }
 
 template<typename T>
-inline NyaVec4Custom<T> operator*(float a, const NyaVec4Custom<T>& v)
-{
-	return v * a;
+inline NyaVec3Custom<T> operator/(const float a, const NyaVec3Custom<T>& b) {
+	return { a / b.x, a / b.y, a / b.z };
+}
+
+template<typename T>
+inline NyaVec4Custom<T> operator*(float a, const NyaVec4Custom<T>& b) {
+	return b * a;
+}
+
+template<typename T>
+inline NyaVec4Custom<T> operator/(const float a, const NyaVec4Custom<T>& b) {
+	return { a / b.x, a / b.y, a / b.z, a / b.w };
 }
 
 using NyaVec3 = NyaVec3Custom<float>;
