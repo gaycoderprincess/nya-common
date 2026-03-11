@@ -22,7 +22,6 @@ public:
 	float& operator[] (int i) { return (&x)[i]; }
 #else
 template<typename T>
-
 class NyaVec4Custom;
 
 template<typename T>
