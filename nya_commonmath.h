@@ -157,7 +157,7 @@ public:
 
 	operator NyaVec3Custom<T>() const { return { x, y, z }; }
 
-	NyaVec4Custom() : x(0), y(0), z(0) {}
+	NyaVec4Custom() : x(0), y(0), z(0), w(0) {}
 	NyaVec4Custom(T _x) : x(_x), y(_x), z(_x), w(_x) {}
 	NyaVec4Custom(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) {}
 	NyaVec4Custom(const NyaVec3Custom<T>& other) : x(other.x), y(other.y), z(other.z), w(0) {}
