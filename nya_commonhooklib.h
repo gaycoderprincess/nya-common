@@ -123,8 +123,8 @@ namespace NyaHookLib {
 			uintptr_t startAddress;
 			uintptr_t endAddress;
 		};
-		std::vector<Section> aPESections;
-		void ScanPE() {
+		inline std::vector<Section> aPESections;
+		inline void ScanPE() {
 			auto module = (uintptr_t)GetModuleHandleA(nullptr);
 			auto dosHeader = (PIMAGE_DOS_HEADER)module;
 			auto ntHeader = (PIMAGE_NT_HEADERS)(module + dosHeader->e_lfanew);
@@ -137,7 +137,7 @@ namespace NyaHookLib {
 			}
 		}
 
-		uintptr_t FindSignature(const std::vector<uint16_t>& bytes, uintptr_t startAddress, uintptr_t endAddress) {
+		inline uintptr_t FindSignature(const std::vector<uint16_t>& bytes, uintptr_t startAddress, uintptr_t endAddress) {
 			if (bytes.empty()) return 0;
 
 			for (uintptr_t i = startAddress; i < endAddress; i++) {
@@ -161,7 +161,7 @@ namespace NyaHookLib {
 		}
 
 		// the bytes array is actually int8, any values above 0xFF are discarded as wildcards!
-		uintptr_t FindSignature(const std::vector<uint16_t>& bytes) {
+		inline uintptr_t FindSignature(const std::vector<uint16_t>& bytes) {
 			if (bytes.empty()) return 0;
 
 			if (aPESections.empty()) {
