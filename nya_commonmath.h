@@ -311,6 +311,20 @@ public:
 	float operator[] (int i) const { return (&x.x)[i]; }
 	float& operator[] (int i) { return (&x.x)[i]; }
 
+	NyaVec3& GetVector(int i) {
+		switch (i) {
+			case 0:
+			default:
+				return x;
+			case 1:
+				return y;
+			case 2:
+				return z;
+			case 3:
+				return p;
+		}
+	}
+
 	void SetIdentity() {
 		memset(this,0,sizeof(*this));
 		x.x = 1;
