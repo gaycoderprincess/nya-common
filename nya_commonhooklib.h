@@ -117,7 +117,7 @@ namespace NyaHookLib {
 	}
 
 	namespace SigScanner {
-		enum { ANY = 0x1FF, };
+		enum { ANY = 0x1FF };
 
 		struct Section {
 			uintptr_t startAddress;
@@ -132,8 +132,10 @@ namespace NyaHookLib {
 
 			for (int i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
 				auto sectionData = &sectionHeader[i];
+				if ((sectionData->Characteristics & IMAGE_SCN_MEM_READ) == 0) continue;
+
 				auto base = module + sectionData->VirtualAddress;
-				aPESections.push_back({base, base + sectionData->SizeOfRawData});
+				aPESections.push_back({base, base + sectionData->Misc.VirtualSize});
 			}
 		}
 
