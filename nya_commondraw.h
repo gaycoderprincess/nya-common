@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "imgui.h"
+#include "imgui_internal.h"
 
 namespace NyaDrawing {
 	class CNyaRGBA32;
@@ -112,6 +113,11 @@ namespace NyaDrawing {
 		float clipMinY = 0;
 		float clipMaxX = 1;
 		float clipMaxY = 1;
+		TEXTURE_TYPE* texture = nullptr;
+		float uvX1 = 0;
+		float uvY1 = 0;
+		float uvX2 = 1;
+		float uvY2 = 1;
 
 		void Draw() const override;
 	};
@@ -138,7 +144,7 @@ namespace NyaDrawing {
 
 bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding = 0, TEXTURE_TYPE* texture = nullptr, float rotation = 0, ImVec2 uvMin = {0,0}, ImVec2 uvMax = {1,1});
 void DrawArc(float x, float y, float radius, float thickness, float start, float end, NyaDrawing::CNyaRGBA32 rgb);
-void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb, float clipMinX = 0, float clipMinY = 0, float clipMaxX = 1, float clipMaxY = 1);
+void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb, float clipMinX = 0, float clipMinY = 0, float clipMaxX = 1, float clipMaxY = 1, TEXTURE_TYPE* texture = nullptr, float uvX1 = 0, float uvY1 = 0, float uvX2 = 1, float uvY2 = 1);
 void DrawString(const tNyaStringData& data, const std::string& string, void(*drawFunc)(const tNyaStringData&, const std::string&) = nullptr);
 void DrawCallback(ImDrawCallback data, bool runImmediately = false);
 float GetStringWidth(float size, const char* string);

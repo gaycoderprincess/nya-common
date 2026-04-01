@@ -52,10 +52,6 @@ namespace NyaDrawing {
 		return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
 	}
 
-	static inline ImVec2 ImRotate(const ImVec2& v, float cos_a, float sin_a) {
-		return ImVec2(v.x * cos_a - v.y * sin_a, v.x * sin_a + v.y * cos_a);
-	}
-
 	void ImageRotated(ImDrawList* draw_list, ImTextureID tex_id, ImVec2 center, ImVec2 size, float angle, ImU32 col) {
 		float cos_a = cosf(angle);
 		float sin_a = sinf(angle);
@@ -144,9 +140,21 @@ namespace NyaDrawing {
 
 		auto drawList = ImGui::GetForegroundDrawList();
 
+		if (texture) {
+			drawList->PushTextureID(texture);
+		}
+
+		int vert_start_idx = drawList->VtxBuffer.Size;
 		drawList->PushClipRect(clipRectMin, clipRectMax);
 		drawList->AddTriangleFilled(v1, v2, v3, rgb);
 		drawList->PopClipRect();
+		int vert_end_idx = drawList->VtxBuffer.Size;
+
+		if (texture) {
+			ImGui::ShadeVertsLinearUV(drawList, vert_start_idx, vert_end_idx, ImVec2(uvX1*nResX, uvY1*nResY), ImVec2(uvX2*nResX, uvY2*nResY), ImVec2(0,0), ImVec2(1,1), true);
+
+			drawList->PopTextureID();
+		}
 	}
 
 	void CNyaText::Draw() const {
@@ -341,7 +349,7 @@ void DrawArc(float x, float y, float radius, float thickness, float start, float
 	NyaDrawing::aDrawList.push_back(&tmp);
 }
 
-void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb, float clipMinX, float clipMinY, float clipMaxX, float clipMaxY) {
+void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, NyaDrawing::CNyaRGBA32 rgb, float clipMinX, float clipMinY, float clipMaxX, float clipMaxY, TEXTURE_TYPE* texture, float uvX1, float uvY1, float uvX2, float uvY2) {
 	if (NyaDrawing::nNextTriangle >= NyaDrawing::nMaxDrawablesPerType) return;
 
 	auto& tmp = NyaDrawing::aTriangles[NyaDrawing::nNextTriangle++];
@@ -359,6 +367,11 @@ void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, Ny
 	tmp.clipMinY = clipMinY;
 	tmp.clipMaxX = clipMaxX;
 	tmp.clipMaxY = clipMaxY;
+	tmp.uvX1 = uvX1;
+	tmp.uvY1 = uvY1;
+	tmp.uvX2 = uvX2;
+	tmp.uvY2 = uvY2;
+	tmp.texture = texture;
 	NyaDrawing::aDrawList.push_back(&tmp);
 }
 
