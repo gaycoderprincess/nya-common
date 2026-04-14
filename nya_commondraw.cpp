@@ -89,12 +89,20 @@ namespace NyaDrawing {
 		ImVec2 v3 = {uvx1, uvy1};
 		ImVec2 v4 = {uvx2, uvy2};
 
+		ImVec2 clipRectMin, clipRectMax;
+		clipRectMin.x = clipMinX * nResX;
+		clipRectMin.y = clipMinY * nResY;
+		clipRectMax.x = clipMaxX * nResX;
+		clipRectMax.y = clipMaxY * nResY;
+
 		auto drawList = ImGui::GetForegroundDrawList();
+		drawList->PushClipRect(clipRectMin, clipRectMax);
 		if (texture) {
 			if (rotation != 0.0) ImageRotated(drawList, texture, ImVec2((v1.x + v2.x) * 0.5, (v1.y + v2.y) * 0.5), ImVec2(v2.x - v1.x, v2.y - v1.y), rotation, rgb);
 			else drawList->AddImageRounded(texture, v1, v2, v3, v4, rgb, rounding * nResY, 0);
 		}
 		else drawList->AddRectFilled(v1, v2, rgb, rounding * nResY, 0);
+		drawList->PopClipRect();
 	}
 
 	void CNyaArc::Draw() const {
@@ -303,7 +311,7 @@ float GetStringHeight(float size, const char* string) {
 	return ImGui::GetFont()->CalcTextSizeA(scale, FLT_MAX, 0, string).y / (double)nResY;
 }
 
-bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding, TEXTURE_TYPE* texture, float rotation, ImVec2 uvMin, ImVec2 uvMax) {
+bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, float rounding, TEXTURE_TYPE* texture, float rotation, ImVec2 uvMin, ImVec2 uvMax, float clipMinX, float clipMinY, float clipMaxX, float clipMaxY) {
 	if (NyaDrawing::nNextRectangle >= NyaDrawing::nMaxDrawablesPerType) return false;
 
 	auto& tmp = NyaDrawing::aRectangles[NyaDrawing::nNextRectangle++];
@@ -322,6 +330,10 @@ bool DrawRectangle(float left, float right, float top, float bottom, NyaDrawing:
 	tmp.uvy1 = uvMin.y;
 	tmp.uvx2 = uvMax.x;
 	tmp.uvy2 = uvMax.y;
+	tmp.clipMinX = clipMinX;
+	tmp.clipMinY = clipMinY;
+	tmp.clipMaxX = clipMaxX;
+	tmp.clipMaxY = clipMaxY;
 	NyaDrawing::aDrawList.push_back(&tmp);
 
 	if (!IsWindowInFocus()) return false;
