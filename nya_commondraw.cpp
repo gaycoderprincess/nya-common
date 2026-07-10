@@ -236,6 +236,8 @@ namespace NyaDrawing {
 	int nNextCallback = 0;
 
 	void DrawAll() {
+		if (aDrawList.empty()) return;
+
 #ifdef NYA_BACKEND_DX8
 		ImGui_ImplDX8_NewFrame();
 #endif

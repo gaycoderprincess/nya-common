@@ -6,6 +6,7 @@ public:
 	double fDeltaTime;
 	double fTotalTime;
 	double fMinDelta;
+	uint64_t nDeltaTimeMicroseconds;
 
 	CNyaTimer();
 	CNyaTimer(float minDelta);
