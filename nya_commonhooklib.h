@@ -5,6 +5,11 @@
 #include <vector>
 
 namespace NyaHookLib {
+	inline void Unprotect(uintptr_t address, size_t size) {
+		DWORD backup, backup2;
+		VirtualProtect((void*)address, size, PAGE_EXECUTE_READWRITE, &backup);
+	}
+
 	template<typename T>
 	inline void Patch(uintptr_t address, T value) {
 		DWORD backup, backup2;
