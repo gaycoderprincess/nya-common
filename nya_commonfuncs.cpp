@@ -141,14 +141,6 @@ std::string GetTimeFromMilliseconds(int value, bool altFormat) {
 	}
 }
 
-bool StringHasEnding (std::string const &fullString, std::string const &ending) {
-	if (fullString.length() >= ending.length()) {
-		return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
-	} else {
-		return false;
-	}
-}
-
 std::string CapStringToWidth(const char* str, float size, float width) {
 	std::string ret = str;
 

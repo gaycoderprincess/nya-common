@@ -71,7 +71,6 @@ int GetPadLastKeyState(int key, int padId = -1, bool padKeyAsButton = false);
 void SetPadDeadzone(int deadzone);
 std::string GetTimeFromSeconds(int value);
 std::string GetTimeFromMilliseconds(int value, bool altFormat = false);
-bool StringHasEnding(std::string const &fullString, std::string const &ending);
 std::string CapStringToWidth(const char* str, float size, float width);
 bool IsWriteableInputCharacter(std::string& str);
 void WriteStringToFile(std::ofstream& file, const char* string);
