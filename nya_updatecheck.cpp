@@ -13,7 +13,9 @@ namespace UpdateChecker {
 
 	std::string sProjectName = CWOEE_UPDATER_PROJECT;
 	void OpenUpdatePage() {
-#ifdef CWOEE_UPDATER_GIT_GAY
+#ifdef CWOEE_UPDATER_CODEBERG
+		ShellExecuteA(nullptr, "open", std::format("https://codeberg.org/gaycoderprincess/{}/releases/latest", sProjectName).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+#elif CWOEE_UPDATER_GIT_GAY
 		ShellExecuteA(nullptr, "open", std::format("https://git.gay/gaycoderprincess/{}/releases/latest", sProjectName).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #elif CWOEE_UPDATER_GITHUB
 		ShellExecuteA(nullptr, "open", std::format("https://github.com/gaycoderprincess/{}/releases/latest", sProjectName).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
@@ -77,7 +79,9 @@ namespace UpdateChecker {
 		}
 
 		if (auto curl = curl_easy_init()) {
-#ifdef CWOEE_UPDATER_GIT_GAY
+#ifdef CWOEE_UPDATER_CODEBERG
+			curl_easy_setopt(curl, CURLOPT_URL, std::format("https://codeberg.org/api/v1/repos/gaycoderprincess/{}/releases", sProjectName).c_str());
+#elif CWOEE_UPDATER_GIT_GAY
 			curl_easy_setopt(curl, CURLOPT_URL, std::format("https://git.gay/api/v1/repos/gaycoderprincess/{}/releases", sProjectName).c_str());
 #elif CWOEE_UPDATER_GITHUB
 			curl_easy_setopt(curl, CURLOPT_URL, std::format("https://api.github.com/repos/gaycoderprincess/{}/releases", sProjectName).c_str());
